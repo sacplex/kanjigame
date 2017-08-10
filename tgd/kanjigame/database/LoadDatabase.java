@@ -26,6 +26,8 @@ public class LoadDatabase
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
+        int index = 0;
+
         try
         {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanji", "admin", "admin");
@@ -34,8 +36,9 @@ public class LoadDatabase
 
             resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next())
+            while (resultSet.next()) {
                 buildCards(resultSet);
+            }
         }
         catch(SQLException e)
         {

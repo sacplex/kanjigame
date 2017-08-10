@@ -91,22 +91,23 @@ public class PlayerBoard
                 }
                 else if(cards.get(i).getCardState() == Card.CARD_STATE.Playing)
                 {
-                    if(PlayArea.getDragingCard())
+                    if(PlayArea.getDragingCard()) {
+
+                    }
+
+                    else if(!PlayArea.getDragingCard())
                     {
                         System.out.println("Back To Front");
                         System.out.println(cards.get(i).getCardIndex());
-                        cards.get(i).backToFrontOfCard();
-                        cards.get(i).setCardState(Card.CARD_STATE.Pre_Play);
 
+                        cards.get(i).setCardState(Card.CARD_STATE.Pre_Play);
+                        cards.get(i).backToFrontOfCard();
                         PlayArea.getCardIndices().get(cards.get(i).getCardIndex()).reLock2();
 
                         /*for (int j = 0; j < NUMBER_OF_STARTING_CARDS; j++) {
                             if (PlayArea.getCardIndices().get(j).reLock(cards.get(i).getCardIndex()))
                                 break;
                         }*/
-
-                        for(PlayArea.CardIndex cardIndex : PlayArea.getCardIndices())
-                            System.out.println(cardIndex);
                     }
                 }
             }

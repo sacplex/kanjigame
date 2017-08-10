@@ -42,13 +42,11 @@ public class PlayArea
         if(card != null)
         {
             card.updateBoxLocation();
+            PlayArea.setDragingCard(false);
 
             if (box.intersects(card.getFrontOfCard().getBox()))
             {
                 System.out.println("Card has intersected with playing area");
-
-                PlayArea.setDragingCard(false);
-
                 card.reverseBoxLocation();
                 card.toFrontOfCardLarge();
                 //card.setCardIndex(PlayArea.getNumberOfCardsPlaying());

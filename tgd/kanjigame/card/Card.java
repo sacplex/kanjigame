@@ -29,6 +29,8 @@ public class Card implements Comparable<Card>
     private String english;
     private String shortEnglish;
     private String shorterEnglish;
+    private String kunyomi;
+    private String onyomi;
 
     private Rectangle playingBox;
 
@@ -77,6 +79,19 @@ public class Card implements Comparable<Card>
         if (shorterEnglish.substring(shorterEnglish.length()-1).equals(","))
             shorterEnglish = shorterEnglish.substring(0, shorterEnglish.length() - 1);
 
+        if(strokeCard != null && strokeCard.getKunyomi().length() != 0)
+        {
+            String [] kunyomiArray = strokeCard.getKunyomi().split(".");
+
+            if(kunyomiArray.length > 0)
+                kunyomi = kunyomiArray[0];
+            else
+                kunyomi = strokeCard.getKunyomi();
+        }
+
+        if(strokeCard != null && strokeCard.getOnyomi().length() != 0)
+            onyomi = strokeCard.getOnyomi();
+
         drawSmaller = shortEnglish.length() > 12 ? true : false;
         drawFront = false;
 
@@ -108,6 +123,12 @@ public class Card implements Comparable<Card>
 
         if (shorterEnglish.substring(shorterEnglish.length()-1).equals(","))
             shorterEnglish = shorterEnglish.substring(0, shorterEnglish.length() - 1);
+
+        if(nCard != null && nCard.getKunyomi().length() != 0)
+            kunyomi = nCard.getKunyomi();
+
+        if(nCard != null && nCard.getOnyomi().length() != 0)
+            onyomi = nCard.getOnyomi();
 
         drawSmaller = shortEnglish.length() > 12 ? true : false;
         drawFront = false;
@@ -141,7 +162,7 @@ public class Card implements Comparable<Card>
 
     private void drawFontCard(GraphicsContext gc, CardSprite card, int offsetY)
     {
-        gc.setFill(Color.BLACK);
+        setColour(gc);
         gc.drawImage(card.getImage(), card.getX() - playingOffsetX, card.getY() - playingOffsetY);
 
         gc.setTextAlign(TextAlignment.CENTER);
@@ -155,7 +176,7 @@ public class Card implements Comparable<Card>
         else
             gc.setFont(Font.font(NORMAL_ENGLISH_SIZE));
 
-        gc.fillText(shortEnglish, card.getX() + 50 - playingOffsetX, card.getY() + 100 - playingOffsetY);
+        gc.fillText(shortEnglish, card.getX() + 50 - playingOffsetX, card.getY() + 120 - playingOffsetY);
 
         if(Debug.DRAW_PLAYING_BOX && card.getBox() != null) {
             gc.setFill(Color.RED);
@@ -165,7 +186,7 @@ public class Card implements Comparable<Card>
 
     private void drawPlayingCard(GraphicsContext gc, CardSprite card)
     {
-        gc.setFill(Color.BLACK);
+        setColour(gc);
         gc.drawImage(card.getImage(), card.getX() - (MULTICARDOFFSETX * cardIndex), card.getY() - moveUpY);
 
         gc.setTextAlign(TextAlignment.CENTER);
@@ -179,7 +200,7 @@ public class Card implements Comparable<Card>
         else
             gc.setFont(Font.font(NORMAL_ENGLISH_SIZE));
 
-        gc.fillText(shortEnglish, card.getX() + 86 - (MULTICARDOFFSETX * cardIndex), card.getY() + 180 - moveUpY);
+        gc.fillText(shortEnglish, card.getX() + 86 - (MULTICARDOFFSETX * cardIndex), card.getY() + 210 - moveUpY);
 
         if(Debug.DRAW_PLAYING_BOX && card.getBox() != null) {
             gc.setFill(Color.RED);
@@ -190,6 +211,24 @@ public class Card implements Comparable<Card>
             gc.setFill(Color.BLUE);
             gc.fillRect(playingBox.x, playingBox.y, playingBox.width, playingBox.height);
         }
+    }
+
+    private void setColour(GraphicsContext gc)
+    {
+        if(colour.equals("black"))
+            gc.setFill(Color.BLACK);
+        else if(colour.equals("white"))
+            gc.setFill(Color.rgb(137,137,137)); // gray
+        else if(colour.equals("purple"))
+            gc.setFill(Color.rgb(193,128,214)); // purple
+        else if(colour.equals("blue"))
+            gc.setFill((Color.rgb(59,85, 255))); // blue
+        else if(colour.equals("green"))
+            gc.setFill((Color.rgb(73,189, 49))); // green
+        else if(colour.equals("orange"))
+            gc.setFill((Color.rgb(255,139, 62))); // orange
+        else if(colour.equals("red"))
+            gc.setFill((Color.rgb(255,57, 57))); // red
     }
 
     public int getStrokesValue()
