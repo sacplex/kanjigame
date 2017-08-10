@@ -1,0 +1,96 @@
+package com.tgd.kanjigame;
+
+import com.tgd.kanjigame.board.PlayerBoard;
+import com.tgd.kanjigame.card.Card;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
+
+public class Game
+{
+    public final static int WIDTH = 1280;
+    public final static int HEIGHT = 720;
+
+    private Scene scene;
+    private GraphicsContext gc;
+    private PlayerBoard playerBoard;
+
+    public Game(GraphicsContext gc)
+    {
+        this.gc = gc;
+    }
+
+    Card playingCard;
+
+    public void initMouse()
+    {
+        if(scene != null)
+        {
+            scene.setOnMousePressed(event -> {
+                if(playingCard != null) {
+                    if(!playerBoard.getPlayArea().hasCardIntersectedWithPlayArea(playingCard, playerBoard))
+                        playingCard.resetOriginal();
+                }
+
+                playingCard = playerBoard.hasMouseIntersectedWithCard((int)event.getX(), (int)event.getY());
+            });
+
+            scene.setOnMouseMoved(mouseMoveEvent -> {
+                if(playingCard != null)
+                    playingCard.dragCard((int) mouseMoveEvent.getX(), (int) mouseMoveEvent.getY());
+            });
+
+            /*scene.setOnMouseReleased(mouseReleasedEvent -> {
+                if(playingCard != null) {
+                    System.out.println("released");
+
+                }
+            });*/
+        }
+    }
+
+    public void run()
+    {
+        Timeline gameLoop = new Timeline();
+        gameLoop.setCycleCount(Timeline.INDEFINITE);
+
+        final long timeStart = System.currentTimeMillis();
+
+        KeyFrame keyFrame = new KeyFrame(
+                Duration.seconds(0.017), event -> {
+                    update();
+                    render();
+        });
+
+        gameLoop.getKeyFrames().add(keyFrame);
+        gameLoop.play();
+    }
+
+    private void update()
+    {
+
+    }
+
+    private void render()
+    {
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0,0,1280,720);
+        gc.setFill(Color.BLACK);
+
+        if(playerBoard != null)
+            playerBoard.draw(gc);
+    }
+
+    public void addScene(Scene scene)
+    {
+        this.scene = scene;
+    }
+
+    public void addPlayerBoard(PlayerBoard playerBoard)
+    {
+        this.playerBoard = playerBoard;
+    }
+}
