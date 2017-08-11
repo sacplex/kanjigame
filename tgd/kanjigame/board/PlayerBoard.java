@@ -2,7 +2,9 @@ package com.tgd.kanjigame.board;
 
 import com.tgd.kanjigame.Game;
 import com.tgd.kanjigame.card.Card;
+import com.tgd.kanjigame.control.Button;
 import com.tgd.kanjigame.database.LoadDatabase;
+import com.tgd.kanjigame.gamerules.Validator;
 import com.tgd.kanjigame.io.ImageIO;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -14,11 +16,13 @@ public class PlayerBoard
     public static final int NUMBER_OF_STARTING_CARDS = 12;
     private ArrayList<Card> cards = new ArrayList<>(NUMBER_OF_STARTING_CARDS);
     private PlayArea playArea;
+    private Button playingButton;
 
     public PlayerBoard(LoadDatabase database, ImageIO imageIO)
     {
-        Card card = null;
+        Card card;
         playArea = new PlayArea(192, 144, Game.WIDTH/2 + Game.WIDTH/6, Game.HEIGHT/3);
+        playingButton = new Button(imageIO.getImage("play_button.png"), Game.WIDTH/2 - 100, 100);
 
         for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
         {
@@ -41,6 +45,8 @@ public class PlayerBoard
     {
         playArea.draw(gc);
 
+        playingButton.draw(gc);
+
         for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
         {
             cards.get(i).draw(gc);
@@ -49,7 +55,7 @@ public class PlayerBoard
 
     public Card hasMouseIntersectedWithCard(int x, int y)
     {
-        Card card = null;
+        Card card;
         int i;
 
         Collections.sort(cards);
@@ -91,11 +97,7 @@ public class PlayerBoard
                 }
                 else if(cards.get(i).getCardState() == Card.CARD_STATE.Playing)
                 {
-                    if(PlayArea.getDragingCard()) {
-
-                    }
-
-                    else if(!PlayArea.getDragingCard())
+                    if(!PlayArea.getDragingCard())
                     {
                         System.out.println("Back To Front");
                         System.out.println(cards.get(i).getCardIndex());
@@ -117,6 +119,27 @@ public class PlayerBoard
             cards.get(i).setDrag(false);
 
         return null;
+    }
+
+    public void hasMouseIntersectedWithButton(int x, int y)
+    {
+        if(playingButton.intersected(x, y))
+        {
+            if(!PlayArea.getDragingCard()) {
+                System.out.println("Button Pressed");
+                Validator validator = new Validator();
+
+                for(int i=0; i<cards.size(); i++)
+                {
+                    if(cards.get(i).getCardState() == Card.CARD_STATE.Playing)
+                        validator.add(cards.get(i));
+                }
+
+                validator.validate();
+
+                System.out.println(validator.getIntendedRuleSet());
+            }
+        }
     }
 
     public Card getUpCard()
@@ -149,12 +172,7 @@ public class PlayerBoard
 
     public void sortCards()
     {
-        System.out.println("sort cards");
-
         Collections.sort(cards);
-
-        for(int i = 0; i<cards.size(); i++)
-            System.out.println(cards.get(i).getCardIndex());
     }
 
     public PlayArea getPlayArea() { return playArea; }

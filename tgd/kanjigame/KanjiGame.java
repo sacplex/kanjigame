@@ -32,7 +32,7 @@ public class KanjiGame extends Application
         imageIO.addAllFileNames("black_v_card.png",
                 "blue_v_card.png", "green_v_card.png", "orange_v_card.png",
                 "purple_v_card.png", "red_v_card.png", "white_v_card.png",
-                "blank_card.png", "large_blank_card.png");
+                "blank_card.png", "large_blank_card.png", "play_button.png");
 
         imageIO.loadImages();
 

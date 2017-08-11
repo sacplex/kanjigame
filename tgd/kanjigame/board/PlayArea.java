@@ -34,7 +34,7 @@ public class PlayArea
         }
     }
 
-    public boolean hasCardIntersectedWithPlayArea(Card card, PlayerBoard playerBoard)
+    public boolean hasCardIntersectedWithPlayArea(Card card)
     {
         boolean retIntersection = false;
         System.out.println("Has card intersected with playing area");

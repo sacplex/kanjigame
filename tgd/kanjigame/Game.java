@@ -2,6 +2,7 @@ package com.tgd.kanjigame;
 
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
+import com.tgd.kanjigame.io.ImageIO;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
@@ -18,20 +19,22 @@ public class Game
     private GraphicsContext gc;
     private PlayerBoard playerBoard;
 
+    private Card playingCard;
+
     public Game(GraphicsContext gc)
     {
         this.gc = gc;
     }
-
-    Card playingCard;
 
     public void initMouse()
     {
         if(scene != null)
         {
             scene.setOnMousePressed(event -> {
+                playerBoard.hasMouseIntersectedWithButton((int)event.getX(), (int)event.getY());
+
                 if(playingCard != null) {
-                    if(!playerBoard.getPlayArea().hasCardIntersectedWithPlayArea(playingCard, playerBoard))
+                    if(!playerBoard.getPlayArea().hasCardIntersectedWithPlayArea(playingCard))
                         playingCard.resetOriginal();
                 }
 
