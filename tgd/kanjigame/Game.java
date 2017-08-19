@@ -3,6 +3,7 @@ package com.tgd.kanjigame;
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.io.ImageIO;
+import com.tgd.kanjigame.network.client.Client;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ public class Game
 
     private Scene scene;
     private GraphicsContext gc;
+    private Client client;
     private PlayerBoard playerBoard;
 
     private Card playingCard;
@@ -96,4 +98,6 @@ public class Game
     {
         this.playerBoard = playerBoard;
     }
+
+    public void addClient(Client client) { this.client = client; }
 }

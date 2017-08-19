@@ -4,6 +4,7 @@ import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.io.ImageIO;
 
+import com.tgd.kanjigame.network.client.Client;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -36,9 +37,11 @@ public class KanjiGame extends Application
 
         imageIO.loadImages();
 
+
         LoadDatabase loadDatabase = LoadDatabase.getInstance();
 
         PlayerBoard playerBoard = new PlayerBoard(loadDatabase, imageIO);
+        playerBoard.setClient(new Client());
 
         Game game = new Game(gc);
         game.addPlayerBoard(playerBoard);

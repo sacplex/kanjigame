@@ -5,6 +5,7 @@ import com.tgd.kanjigame.board.PlayArea;
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.debug.Debug;
 import com.tgd.kanjigame.io.ImageIO;
+import com.tgd.kanjigame.network.object.CardNetworkObject;
 import com.tgd.kanjigame.sprite.CardSprite;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -134,6 +135,11 @@ public class Card implements Comparable<Card>
         drawFront = false;
 
         original = true;
+    }
+
+    public Card(CardNetworkObject cardNetworkObject)
+    {
+        this.strokes = "" + cardNetworkObject.getStrokeNumber();
     }
 
     public void buildGraphics(ImageIO imageIO, int x, int y)
@@ -316,6 +322,8 @@ public class Card implements Comparable<Card>
         frontOfCard.getBox().x = frontOfCard.getBox().x + playingOffsetX;
         frontOfCard.getBox().y = frontOfCard.getBox().y + playingOffsetY;
 
+        frontOfCardLarge.setLocation(0,0);
+
         System.out.println("Box X: " + frontOfCard.getBox().x + ", Y: " + frontOfCard.getBox().y);
         System.out.println("Offset X: " + playingOffsetX + ", Y: " + playingOffsetY);
     }
@@ -324,6 +332,7 @@ public class Card implements Comparable<Card>
     {
         System.out.println("Box X: " + frontOfCard.getBox().x + ", Y: " + frontOfCard.getBox().y);
         frontOfCard.setLocation(frontOfCard.getBox().x, frontOfCard.getBox().y);
+        frontOfCardLarge.setLocation(0,0);
         playingOffsetX = 0;
         playingOffsetY = 0;
         moveUpY = 0;
@@ -353,7 +362,7 @@ public class Card implements Comparable<Card>
 
             System.out.println("Card Index: " + cardIndex);
 
-            if(card != null /*&& moveUpY == 20 && card.getCardState() == CARD_STATE.Playing*/)
+            if(card != null && frontOfCardLarge.getY() == 156 && card.getFrontOfCardLarge().getY() == 156/*&& moveUpY == 20 && card.getCardState() == CARD_STATE.Playing*/)
             {
                 System.out.println("Swap Card Index: " + card.getCardIndex());
                 playerBoard.resetUpCard();
@@ -410,6 +419,8 @@ public class Card implements Comparable<Card>
     public CARD_STATE getCardState() { return card_state; }
 
     public CardSprite getFrontOfCard() { return frontOfCard; }
+
+    public CardSprite getFrontOfCardLarge() { return frontOfCardLarge; }
 
     public void setCardIndex(int cardIndex) { this.cardIndex = cardIndex; }
 
