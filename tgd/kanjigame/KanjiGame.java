@@ -5,12 +5,16 @@ import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.io.ImageIO;
 
 import com.tgd.kanjigame.network.client.Client;
+import com.tgd.kanjigame.network.object.PlayerNetworkObject;
+import com.tgd.kanjigame.players.Player;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
+
+import java.util.Scanner;
 
 public class KanjiGame extends Application
 {
@@ -40,8 +44,18 @@ public class KanjiGame extends Application
 
         LoadDatabase loadDatabase = LoadDatabase.getInstance();
 
+        System.out.println("Enter your player's name...");
+
+        Scanner scanner = new Scanner(System.in);
+        String clientName = scanner.next();
+
+        Player player = new Player();
+
+        player.setClient(new Client(clientName));
+        player.getClient().sendPlayerToServer(new PlayerNetworkObject(player.getName()));
+
         PlayerBoard playerBoard = new PlayerBoard(loadDatabase, imageIO);
-        playerBoard.setClient(new Client());
+        playerBoard.setPlayer(player);
 
         Game game = new Game(gc);
         game.addPlayerBoard(playerBoard);

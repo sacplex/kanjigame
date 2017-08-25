@@ -4,6 +4,7 @@ import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.gamerules.Validator;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
+import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,6 +14,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.rmi.ServerError;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ClientHandler implements Runnable
 {
@@ -124,6 +127,16 @@ public class ClientHandler implements Runnable
         validator.validate();
         System.out.println(validator.getIntendedRuleSet());
     }
+
+    /*private void validatePlayerName(PlayerNetworkObject playerNetworkObject)
+    {
+        if(!playersNames.contains(playerNetworkObject.getName()))
+            playersNames.add(playerNetworkObject.getName());
+        else
+        {
+            // TODO: MESSAGE BACK TO PLAYER
+        }
+    }*/
 
     public void close()
     {

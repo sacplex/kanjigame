@@ -1,6 +1,7 @@
 package com.tgd.kanjigame.network.server;
 
 import com.tgd.kanjigame.network.object.NetworkObject;
+import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 
 import javax.net.ServerSocketFactory;
 import java.io.IOException;
@@ -16,7 +17,8 @@ public class Server
 
     private int numberOfClients;
 
-    private HashMap<Object, ClientHandler> clients;
+    private HashMap<String, ClientHandler> clients;
+
 
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
@@ -79,33 +81,38 @@ public class Server
         System.out.println("Adding new client");
 
         ClientHandler client = null;
-        NetworkObject networkObject = null;
+        PlayerNetworkObject playerNetworkObject = null;
 
-        if(clients.get(connection) == null)
+        try
         {
-            try
+            objectOutputStream = new ObjectOutputStream((connection.getOutputStream()));
+            objectInputStream = new ObjectInputStream(connection.getInputStream());
+
+            playerNetworkObject = (PlayerNetworkObject)objectInputStream.readObject();
+
+            if(validatePlayerName(playerNetworkObject))
             {
-                objectOutputStream = new ObjectOutputStream((connection.getOutputStream()));
-                objectInputStream = new ObjectInputStream(connection.getInputStream());
-
-                networkObject = (NetworkObject)objectInputStream.readObject();
-
-                System.out.println("ID: " + networkObject.getId());
+                System.out.println("ID: " + playerNetworkObject.getId());
+                System.out.println("Game Player's Name: " + playerNetworkObject.getName());
 
                 client = new ClientHandler(this, connection, connection.getInetAddress(), objectInputStream, objectOutputStream);
 
-                clients.put(networkObject, client);
+                clients.put(playerNetworkObject.getName(), client);
 
-                clients.get(networkObject).startClient();
+                clients.get(playerNetworkObject.getName()).startClient();
             }
-            catch(ClassNotFoundException e)
+            else
             {
-                System.out.println(e);
+                // TODO - REMOVE INVALID PLAYER NAME BACK TO CLIENT
             }
-            catch(IOException e)
-            {
-                System.out.println(e);
-            }
+        }
+        catch(ClassNotFoundException e)
+        {
+            System.out.println(e);
+        }
+        catch(IOException e)
+        {
+            System.out.println(e);
         }
     }
 
@@ -120,9 +127,19 @@ public class Server
         }
     }
 
-    public synchronized ClientHandler getClientHandler(NetworkObject networkObject)
+    public synchronized ClientHandler getClientHandler(PlayerNetworkObject networkObject)
     {
         return clients.get(networkObject);
+    }
+
+    private boolean validatePlayerName(PlayerNetworkObject playerNetworkObject)
+    {
+        boolean validPlayerName = false;
+
+        if(clients.get(playerNetworkObject.getName()) == null)
+            validPlayerName = true;
+
+        return validPlayerName;
     }
 
     public static void main(String [] args)

@@ -2,6 +2,7 @@ package com.tgd.kanjigame.network.client;
 
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
+import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,13 +18,17 @@ public class Client
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
+    private String clientName;
+
     private volatile boolean connected;
 
-    public Client()
+    public Client(String clientName)
     {
+        this.clientName = clientName;
+
         try
         {
-            connect();
+            connect(clientName);
         }
         catch (UnknownHostException e)
         {
@@ -35,7 +40,7 @@ public class Client
         }
     }
 
-    private void connect() throws UnknownHostException, IOException
+    private void connect(String clientName) throws UnknownHostException, IOException
     {
         connection = new Socket("127.0.0.1", PORT);
 
@@ -44,7 +49,7 @@ public class Client
 
         if(connected)
         {
-            NetworkObject networkObject = new NetworkObject("KanjiGameClient");
+            PlayerNetworkObject playerNetworkObject = new PlayerNetworkObject(clientName);
 
             objectOutputStream = new ObjectOutputStream((connection.getOutputStream()));
             objectOutputStream.flush();
@@ -52,7 +57,7 @@ public class Client
 
             try
             {
-                objectOutputStream.writeObject(networkObject);
+                objectOutputStream.writeObject(playerNetworkObject);
                 objectOutputStream.flush();
             }
             catch(IOException e)
@@ -66,11 +71,21 @@ public class Client
         }
     }
 
-    public void sendToServer(CardHolderNetworkObject cardHolderNetworkObject)
+    public void sendCardsToServer(CardHolderNetworkObject cardHolderNetworkObject)
+    {
+        sendToServer(cardHolderNetworkObject);
+    }
+
+    public void sendPlayerToServer(PlayerNetworkObject playerNetworkObject)
+    {
+        sendToServer(playerNetworkObject);
+    }
+
+    private void sendToServer(NetworkObject networkObject)
     {
         try
         {
-            objectOutputStream.writeObject(cardHolderNetworkObject);
+            objectOutputStream.writeObject(networkObject);
             objectOutputStream.flush();
         }
         catch(UnknownHostException e)

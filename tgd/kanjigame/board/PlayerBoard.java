@@ -6,8 +6,8 @@ import com.tgd.kanjigame.control.Button;
 import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.gamerules.Validator;
 import com.tgd.kanjigame.io.ImageIO;
-import com.tgd.kanjigame.network.client.Client;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
+import com.tgd.kanjigame.players.Player;
 import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class PlayerBoard
     private PlayArea playArea;
     private Button playingButton;
 
-    private Client client;
+    private Player player;
 
     public PlayerBoard(LoadDatabase database, ImageIO imageIO)
     {
@@ -151,7 +151,7 @@ public class PlayerBoard
                         cardHolderNetworkObject.add(cards.get(i));
                 }
 
-                client.sendToServer(cardHolderNetworkObject);
+                player.getClient().sendCardsToServer(cardHolderNetworkObject);
             }
         }
     }
@@ -189,7 +189,7 @@ public class PlayerBoard
         Collections.sort(cards);
     }
 
-    public void setClient(Client client) { this.client = client; }
+    public void setPlayer(Player player) { this.player = player; }
 
     public PlayArea getPlayArea() { return playArea; }
 
