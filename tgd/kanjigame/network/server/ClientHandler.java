@@ -140,11 +140,11 @@ public class ClientHandler implements Runnable
         System.out.println(validator.getIntendedRuleSet());
     }
 
-    private void writeToClients(CardHolderNetworkObject cardHolderNetworkObjectString, String otherPlayer)
+    private void writeToClients(CardHolderNetworkObject cardHolderNetworkObject, String otherPlayer)
     {
         try
         {
-            server.getClientHandler(otherPlayer).getObjectOutputStream().writeObject(cardHolderNetworkObjectString);
+            server.getClientHandler(otherPlayer).getObjectOutputStream().writeObject(cardHolderNetworkObject);
             server.getClientHandler(otherPlayer).getObjectOutputStream().flush();
         }
         catch(IOException e)

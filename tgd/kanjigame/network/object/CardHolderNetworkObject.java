@@ -17,6 +17,11 @@ public class CardHolderNetworkObject extends NetworkObject
     {
         CardNetworkObject cardNetworkObject = new CardNetworkObject();
         cardNetworkObject.setStrokeNumber(card.getStrokesValue());
+        cardNetworkObject.setColour(card.getColour());
+        cardNetworkObject.setKanji(card.getKanji());
+        cardNetworkObject.setKunyomi(card.getKunyomi());
+        cardNetworkObject.setOnyomi(card.getOnyomi());
+        cardNetworkObject.setEnglsih(card.getEnglish());
 
         cards.add(cardNetworkObject);
     }

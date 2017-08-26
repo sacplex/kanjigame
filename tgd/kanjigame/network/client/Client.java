@@ -154,6 +154,13 @@ public class Client implements Runnable
         System.out.println("Other players cards");
 
         for(int i=0; i < cards.size(); i++)
-            System.out.println(cards.get(i).getStrokesValue());
+        {
+            System.out.println("Stroke: " + cards.get(i).getStrokesValue());
+            System.out.println("Colour: " + cards.get(i).getColour());
+            System.out.println("Kanji: " + cards.get(i).getKanji());
+            System.out.println("Kunyomi: " + cards.get(i).getKunyomi());
+            System.out.println("Onyomi: " + cards.get(i).getOnyomi());
+            System.out.println("English: " + cards.get(i).getEnglish() + "\n");
+        }
     }
 }

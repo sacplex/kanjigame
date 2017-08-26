@@ -30,6 +30,7 @@ public class Card implements Comparable<Card>
     private String english;
     private String shortEnglish;
     private String shorterEnglish;
+    private String kanji;
     private String kunyomi;
     private String onyomi;
 
@@ -93,6 +94,9 @@ public class Card implements Comparable<Card>
         if(strokeCard != null && strokeCard.getOnyomi().length() != 0)
             onyomi = strokeCard.getOnyomi();
 
+        if(strokeCard!= null && strokeCard.getKanjiCharacter().length() != 0)
+            kanji = strokeCard.getKanjiCharacter();
+
         drawSmaller = shortEnglish.length() > 12 ? true : false;
         drawFront = false;
 
@@ -131,6 +135,9 @@ public class Card implements Comparable<Card>
         if(nCard != null && nCard.getOnyomi().length() != 0)
             onyomi = nCard.getOnyomi();
 
+        if(strokeCard!= null && strokeCard.getKanjiCharacter().length() != 0)
+            kanji = strokeCard.getKanjiCharacter();
+
         drawSmaller = shortEnglish.length() > 12 ? true : false;
         drawFront = false;
 
@@ -140,6 +147,11 @@ public class Card implements Comparable<Card>
     public Card(CardNetworkObject cardNetworkObject)
     {
         this.strokes = "" + cardNetworkObject.getStrokeNumber();
+        this.colour = cardNetworkObject.getColour();
+        this.kanji = cardNetworkObject.getKanji();
+        this.kunyomi = cardNetworkObject.getKunyomi();
+        this.onyomi = cardNetworkObject.getOnyomi();
+        this.shortEnglish = cardNetworkObject.getEnglsih();
     }
 
     public void buildGraphics(ImageIO imageIO, int x, int y)
@@ -241,6 +253,16 @@ public class Card implements Comparable<Card>
     {
         return Integer.parseInt(strokes);
     }
+
+    public String getColour() { return colour; }
+
+    public String getKanji() { return kanji; }
+
+    public String getKunyomi() { return kunyomi; }
+
+    public String getOnyomi() { return onyomi; }
+
+    public String getEnglish() { return shortEnglish; }
 
     public boolean isIntersected(int x, int y)
     {
