@@ -16,7 +16,7 @@ import java.awt.*;
 
 public class Card implements Comparable<Card>
 {
-    public enum CARD_STATE {Hide, Pre_Play, Playing};
+    public enum CARD_STATE {Hide, Pre_Play, Playing, Played, Post_Play};
     private CARD_STATE card_state = CARD_STATE.Pre_Play;
 
     private NCard nCard;
@@ -52,6 +52,7 @@ public class Card implements Comparable<Card>
     private int originalX, originalY;
     private int moveUpY;
     private int cardIndex;
+    private int destUpY;
 
     private boolean original;
     private boolean drag;
@@ -165,10 +166,8 @@ public class Card implements Comparable<Card>
     {
         if(card_state == CARD_STATE.Pre_Play)
             drawFontCard(gc, frontOfCard, 0);
-        else if(card_state == CARD_STATE.Playing)
+        else if(card_state == CARD_STATE.Playing || card_state == CARD_STATE.Played || card_state == CARD_STATE.Post_Play)
             drawPlayingCard(gc, frontOfCardLarge);
-        else
-            backOfCard.draw(gc);
 
         /*if(state == PLAY_STATE.COVERED)
             backOfCard.draw(gc);
@@ -205,20 +204,20 @@ public class Card implements Comparable<Card>
     private void drawPlayingCard(GraphicsContext gc, CardSprite card)
     {
         setColour(gc);
-        gc.drawImage(card.getImage(), card.getX() - (MULTICARDOFFSETX * cardIndex), card.getY() - moveUpY);
+        gc.drawImage(card.getImage(), card.getX() - (MULTICARDOFFSETX * cardIndex), card.getY() - moveUpY + destUpY);
 
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setFont(Font.font(24));
-        gc.fillText(strokes, card.getX() + 150 - (MULTICARDOFFSETX * cardIndex), card.getY() + 35 - moveUpY);
+        gc.fillText(strokes, card.getX() + 150 - (MULTICARDOFFSETX * cardIndex), card.getY() + 35 - moveUpY + destUpY);
         gc.setFont(Font.font(100));
-        gc.fillText(strokeCard.getKanjiCharacter(), card.getX() + 86 - (MULTICARDOFFSETX * cardIndex), card.getY() + 120 - moveUpY);
+        gc.fillText(kanji, card.getX() + 86 - (MULTICARDOFFSETX * cardIndex), card.getY() + 120 - moveUpY + destUpY);
 
         if(drawSmaller)
             gc.setFont(Font.font(SMALL_ENGLISH_SIZE));
         else
             gc.setFont(Font.font(NORMAL_ENGLISH_SIZE));
 
-        gc.fillText(shortEnglish, card.getX() + 86 - (MULTICARDOFFSETX * cardIndex), card.getY() + 210 - moveUpY);
+        gc.fillText(shortEnglish, card.getX() + 86 - (MULTICARDOFFSETX * cardIndex), card.getY() + 160 - moveUpY + destUpY);
 
         if(Debug.DRAW_PLAYING_BOX && card.getBox() != null) {
             gc.setFill(Color.RED);
@@ -336,7 +335,7 @@ public class Card implements Comparable<Card>
 
     public void toFrontOfCardLarge()
     {
-        frontOfCardLarge.setLocation((int)(Game.WIDTH/2 - frontOfCardLarge.getImage().getWidth()/2 + Game.WIDTH/6), 156);
+        frontOfCardLarge.setLocation((int)(Game.WIDTH/2 - frontOfCardLarge.getImage().getWidth()/2 + Game.WIDTH/6), 176);
     }
 
     public void reverseBoxLocation()
@@ -453,6 +452,8 @@ public class Card implements Comparable<Card>
     public void resetMoveUp() { this.moveUpY = 0; }
 
     public Rectangle getPlayingBox() { return playingBox; }
+
+    public void nextPlayerPlayed() { destUpY = -20; }
 
     public String toString()
     {

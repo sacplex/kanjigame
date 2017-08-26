@@ -74,7 +74,7 @@ public class PlayArea
         }
         else
         {
-            System.out.println("Card is null");
+            System.out.println("Card is null or not interactive");
         }
 
         return retIntersection;

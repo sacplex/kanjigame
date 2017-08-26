@@ -4,7 +4,6 @@ import com.tgd.kanjigame.Game;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.control.Button;
 import com.tgd.kanjigame.database.LoadDatabase;
-import com.tgd.kanjigame.gamerules.Validator;
 import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.players.Player;
@@ -19,11 +18,13 @@ public class PlayerBoard
     private ArrayList<Card> cards = new ArrayList<>(NUMBER_OF_STARTING_CARDS);
     private PlayArea playArea;
     private Button playingButton;
+    private ImageIO imageIO;
 
     private Player player;
 
     public PlayerBoard(LoadDatabase database, ImageIO imageIO)
     {
+        this.imageIO = imageIO;
         Card card;
         playArea = new PlayArea(192, 144, Game.WIDTH/2 + Game.WIDTH/6, Game.HEIGHT/3);
         playingButton = new Button(imageIO.getImage("play_button.png"), Game.WIDTH/2 - 100, 100);
@@ -51,7 +52,7 @@ public class PlayerBoard
 
         playingButton.draw(gc);
 
-        for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
+        for(int i=0; i < cards.size(); i++)
         {
             cards.get(i).draw(gc);
         }
@@ -130,24 +131,21 @@ public class PlayerBoard
         if(playingButton.intersected(x, y))
         {
             if(!PlayArea.getDragingCard()) {
-                System.out.println("Button Pressed");
-                Validator validator = new Validator();
+                System.out.println("Button Pressed"); // Play Button Pressed
 
                 for(int i=0; i<cards.size(); i++)
                 {
                     if(cards.get(i).getCardState() == Card.CARD_STATE.Playing)
-                        validator.add(cards.get(i));
+                        cards.get(i).setCardState(Card.CARD_STATE.Played);
                 }
 
                 //validator.validate();
-
-                System.out.println(validator.getIntendedRuleSet());
 
                 CardHolderNetworkObject cardHolderNetworkObject = new CardHolderNetworkObject();
 
                 for(int i=0; i<cards.size(); i++)
                 {
-                    if(cards.get(i).getCardState() == Card.CARD_STATE.Playing)
+                    if(cards.get(i).getCardState() == Card.CARD_STATE.Played)
                         cardHolderNetworkObject.add(cards.get(i));
                 }
 
@@ -189,7 +187,12 @@ public class PlayerBoard
         Collections.sort(cards);
     }
 
-    public void setPlayer(Player player) { this.player = player; }
+    public void setPlayer(Player player)
+    {
+        player.getClient().addPlayerBoard(this);
+
+        this.player = player;
+    }
 
     public PlayArea getPlayArea() { return playArea; }
 
@@ -210,5 +213,29 @@ public class PlayerBoard
         card.setCardIndex(tempCardIndex);
 
         Collections.sort(cards);
+    }
+
+    public void addOtherPlayers(ArrayList<Card> cards)
+    {
+        System.out.println("add Other Players");
+        System.out.println(cards.size());
+
+        for(int i=0; i<cards.size(); i++)
+        {
+            cards.get(i).buildGraphics(this.imageIO, 0,0);
+            cards.get(i).toFrontOfCardLarge();
+            cards.get(i).setCardState(Card.CARD_STATE.Post_Play);
+            this.cards.add(cards.get(i));
+        }
+
+        for(int i=0; i<this.cards.size(); i++)
+        {
+            if(this.cards.get(i).getCardState() == Card.CARD_STATE.Post_Play)
+            {
+                System.out.println("Moving Up Played Card");
+                this.cards.get(i).nextPlayerPlayed();
+            }
+
+        }
     }
 }

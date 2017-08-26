@@ -1,5 +1,7 @@
 package com.tgd.kanjigame.network.client;
 
+import com.tgd.kanjigame.board.PlayArea;
+import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
@@ -21,6 +23,8 @@ public class Client implements Runnable
     private Socket connection;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+
+    private PlayerBoard playerBoard;
 
     private String clientName;
 
@@ -129,7 +133,9 @@ public class Client implements Runnable
                 networkObject = (NetworkObject)objectInputStream.readObject();
 
                 if(networkObject instanceof  CardHolderNetworkObject)
-                    rebuildCards((CardHolderNetworkObject)networkObject);
+                {
+                    playerBoard.addOtherPlayers(rebuildCards((CardHolderNetworkObject) networkObject));
+                }
             }
             catch (ClassNotFoundException e)
             {
@@ -144,7 +150,7 @@ public class Client implements Runnable
         }
     }
 
-    private void rebuildCards(CardHolderNetworkObject cardHolderNetworkObject)
+    private ArrayList<Card> rebuildCards(CardHolderNetworkObject cardHolderNetworkObject)
     {
         ArrayList<Card> cards = new ArrayList<Card>(cardHolderNetworkObject.getCards().size());
 
@@ -162,5 +168,12 @@ public class Client implements Runnable
             System.out.println("Onyomi: " + cards.get(i).getOnyomi());
             System.out.println("English: " + cards.get(i).getEnglish() + "\n");
         }
+
+        return cards;
+    }
+
+    public void addPlayerBoard(PlayerBoard playerBoard)
+    {
+        this.playerBoard = playerBoard;
     }
 }
