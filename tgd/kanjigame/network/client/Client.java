@@ -1,5 +1,6 @@
 package com.tgd.kanjigame.network.client;
 
+import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
 import com.tgd.kanjigame.network.object.PlayerNetworkObject;
@@ -9,10 +10,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
-public class Client
+public class Client implements Runnable
 {
     private final static int PORT = 1564;
+
+    private Thread readerThread;
 
     private Socket connection;
     private ObjectOutputStream objectOutputStream;
@@ -21,6 +25,7 @@ public class Client
     private String clientName;
 
     private volatile boolean connected;
+    private volatile boolean running;
 
     public Client(String clientName)
     {
@@ -64,11 +69,26 @@ public class Client
             {
                 System.out.println("IOException: " + e);
             }
+
+            startReaderThread();
         }
         else
         {
             System.out.println("Unable to connected to server");
         }
+    }
+
+    private void startReaderThread()
+    {
+        readerThread = new Thread(this);
+        running = true;
+
+        readerThread.start();
+    }
+
+    public void run()
+    {
+        receiveFromServer();
     }
 
     public void sendCardsToServer(CardHolderNetworkObject cardHolderNetworkObject)
@@ -96,5 +116,44 @@ public class Client
         {
             System.out.println(e);
         }
+    }
+
+    private void receiveFromServer()
+    {
+        NetworkObject networkObject;
+
+        while(running)
+        {
+            try
+            {
+                networkObject = (NetworkObject)objectInputStream.readObject();
+
+                if(networkObject instanceof  CardHolderNetworkObject)
+                    rebuildCards((CardHolderNetworkObject)networkObject);
+            }
+            catch (ClassNotFoundException e)
+            {
+                System.out.println("<Client - ClassNotFoundException, can not convert network object>");
+                e.printStackTrace();
+            }
+            catch(IOException e)
+            {
+                System.out.println("<Client - IOException, can not read network object>");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void rebuildCards(CardHolderNetworkObject cardHolderNetworkObject)
+    {
+        ArrayList<Card> cards = new ArrayList<Card>(cardHolderNetworkObject.getCards().size());
+
+        for(int i=0; i < cardHolderNetworkObject.getCards().size(); i++)
+            cards.add(new Card(cardHolderNetworkObject.getCards().get(i)));
+
+        System.out.println("Other players cards");
+
+        for(int i=0; i < cards.size(); i++)
+            System.out.println(cards.get(i).getStrokesValue());
     }
 }

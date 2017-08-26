@@ -1,5 +1,6 @@
 package com.tgd.kanjigame.network.server;
 
+import com.tgd.kanjigame.lobby.Lobby;
 import com.tgd.kanjigame.network.object.NetworkObject;
 import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 
@@ -19,15 +20,18 @@ public class Server
 
     private HashMap<String, ClientHandler> clients;
 
-
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
+
+    private Lobby lobby;
 
     public Server()
     {
         int port = DEFAULT_PORT;
 
         clients = new HashMap<>();
+
+        lobby = new Lobby();
 
         setUp(port);
     }
@@ -95,7 +99,12 @@ public class Server
                 System.out.println("ID: " + playerNetworkObject.getId());
                 System.out.println("Game Player's Name: " + playerNetworkObject.getName());
 
-                client = new ClientHandler(this, connection, connection.getInetAddress(), objectInputStream, objectOutputStream);
+                lobby.add(playerNetworkObject.getName());
+
+                System.out.println(lobby);
+
+                client = new ClientHandler(this, connection, connection.getInetAddress(), objectInputStream, objectOutputStream, playerNetworkObject.getName());
+                client.addSession(lobby.getSession(playerNetworkObject.getName()));
 
                 clients.put(playerNetworkObject.getName(), client);
 
@@ -127,9 +136,9 @@ public class Server
         }
     }
 
-    public synchronized ClientHandler getClientHandler(PlayerNetworkObject networkObject)
+    public synchronized ClientHandler getClientHandler(String name)
     {
-        return clients.get(networkObject);
+        return clients.get(name);
     }
 
     private boolean validatePlayerName(PlayerNetworkObject playerNetworkObject)

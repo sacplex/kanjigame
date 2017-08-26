@@ -34,6 +34,25 @@ public class Lobby
         }
     }
 
+    public Session getSession(String player)
+    {
+        Session session = null;
+
+        if(sessions.size() != 0)
+        {
+            for(int i=0; i < sessions.size(); i++)
+            {
+                if(sessions.get(i).isPlayerWithinSession(player))
+                {
+                    session = sessions.get(i);
+                    break;
+                }
+            }
+        }
+
+        return session;
+    }
+
     public void remove(String player)
     {
         if(sessions.size() != 0)

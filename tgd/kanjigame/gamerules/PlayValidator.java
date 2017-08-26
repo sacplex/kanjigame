@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class PrePlayValidator
+public class PlayValidator
 {
     public enum RULE_SET {SINGLE, DOUBLE, TRIPLE, QUADS, PENS, HEXS, SEPS, SEASON, STRAIGHT_3_CARDS,
         STRAIGHT_4_CARDS, STRAIGHT_5_CARDS, STRAIGHT_6_CARDS, STRAIGHT_7_CARDS, STRAIGHT_8_CARDS,
@@ -15,7 +15,7 @@ public class PrePlayValidator
     private RULE_SET ruleSet;
     private ArrayList<Card> cards;
 
-    public PrePlayValidator()
+    public PlayValidator()
     {
         cards = new ArrayList<>();
         ruleSet = RULE_SET.ERROR;
@@ -26,42 +26,56 @@ public class PrePlayValidator
         cards.add(card);
     }
 
-    public void validate()
+    public void validate(RULE_SET ruleSet)
     {
         if(this.cards.size() == 1) // Single Card
-            ruleSet = RULE_SET.SINGLE;
+            this.ruleSet = RULE_SET.SINGLE;
         else if(validateMultiCard() && this.cards.size() == 2) // Double Cards
-            ruleSet = RULE_SET.DOUBLE;
+            this.ruleSet = RULE_SET.DOUBLE;
         else if(validateMultiCard() && this.cards.size() == 3) // TRIPLE Cards
-            ruleSet = RULE_SET.TRIPLE;
+            this.ruleSet = RULE_SET.TRIPLE;
         else if(validateMultiCard() && this.cards.size() == 4) // QUADS Cards
-            ruleSet = RULE_SET.QUADS;
+            this.ruleSet = RULE_SET.QUADS;
         else if(validateMultiCard() && this.cards.size() == 5) // PENS Cards
-            ruleSet = RULE_SET.PENS;
-        else if(validateMultiCard() && this.cards.size() == 6) // PENS Cards
-            ruleSet = RULE_SET.HEXS;
-        else if(validateMultiCard() && this.cards.size() == 7) // PENS Cards
-            ruleSet = RULE_SET.SEPS;
+            this.ruleSet = RULE_SET.PENS;
+        else if(validateMultiCard() && this.cards.size() == 6) // HEXS Cards
+            this.ruleSet = RULE_SET.HEXS;
+        else if(validateMultiCard() && this.cards.size() == 7) // SEPS Cards
+            this.ruleSet = RULE_SET.SEPS;
         else if(validateStraight() && this.cards.size() == 3)
-            ruleSet = RULE_SET.STRAIGHT_3_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_3_CARDS;
         else if(validateStraight() && this.cards.size() == 4)
-            ruleSet = RULE_SET.STRAIGHT_4_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_4_CARDS;
         else if(validateStraight() && this.cards.size() == 5)
-            ruleSet = RULE_SET.STRAIGHT_5_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_5_CARDS;
         else if(validateStraight() && this.cards.size() == 6)
-            ruleSet = RULE_SET.STRAIGHT_6_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_6_CARDS;
         else if(validateStraight() && this.cards.size() == 7)
-            ruleSet = RULE_SET.STRAIGHT_7_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_7_CARDS;
         else if(validateStraight() && this.cards.size() == 8)
-            ruleSet = RULE_SET.STRAIGHT_8_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_8_CARDS;
         else if(validateStraight() && this.cards.size() == 9)
-            ruleSet = RULE_SET.STRAIGHT_9_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_9_CARDS;
         else if(validateStraight() && this.cards.size() == 10)
-            ruleSet = RULE_SET.STRAIGHT_10_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_10_CARDS;
         else if(validateStraight() && this.cards.size() == 11)
-            ruleSet = RULE_SET.STRAIGHT_11_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_11_CARDS;
         else if(validateStraight() && this.cards.size() == 12)
-            ruleSet = RULE_SET.STRAIGHT_12_CARDS;
+            this.ruleSet = RULE_SET.STRAIGHT_12_CARDS;
+
+        if(ruleSet != null && ruleSet != RULE_SET.ERROR && this.ruleSet != RULE_SET.ERROR)
+        {
+            if(this.ruleSet == ruleSet)
+            {
+                System.out.println("Both Players have the same rule set: " + ruleSet);
+            }
+            else
+            {
+                System.out.println("Error, players have different rule sets");
+                System.out.println(ruleSet);
+                System.out.println(this.ruleSet);
+            }
+        }
     }
 
     private boolean validateMultiCard()

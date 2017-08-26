@@ -12,10 +12,14 @@ public class Session
     private boolean isEmpty;
     private boolean isFull;
 
+    private int turn;
+
     public Session(int capability)
     {
         isEmpty = true;
         isFull = false;
+
+        turn = 1;
 
         this.capability = capability;
 
@@ -73,6 +77,27 @@ public class Session
         return destPlayers;
     }
 
+    public boolean isPlayerWithinSession(String player)
+    {
+        boolean result = false;
+
+        for(int i=0; i < players.size(); i++)
+        {
+            if(players.get(i).equals(player))
+            {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    public void newTurn()
+    {
+        turn++;
+    }
+
     public boolean isFull()
     {
         return isFull;
@@ -81,6 +106,11 @@ public class Session
     public boolean isEmpty()
     {
         return isEmpty;
+    }
+
+    public int getTurn()
+    {
+        return turn;
     }
 
     public String toString()

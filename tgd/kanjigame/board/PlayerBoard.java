@@ -139,7 +139,7 @@ public class PlayerBoard
                         validator.add(cards.get(i));
                 }
 
-                validator.validate();
+                //validator.validate();
 
                 System.out.println(validator.getIntendedRuleSet());
 

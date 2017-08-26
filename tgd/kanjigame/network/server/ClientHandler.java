@@ -1,7 +1,9 @@
 package com.tgd.kanjigame.network.server;
 
 import com.tgd.kanjigame.card.Card;
+import com.tgd.kanjigame.gamerules.PlayValidator;
 import com.tgd.kanjigame.gamerules.Validator;
+import com.tgd.kanjigame.lobby.Session;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
 import com.tgd.kanjigame.network.object.PlayerNetworkObject;
@@ -25,10 +27,12 @@ public class ClientHandler implements Runnable
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
 
-    private String clientId;
+    private Session session;
+
+    private String playerName;
     private boolean connected;
 
-    public ClientHandler(final Server server, final Socket socket, InetAddress address, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream)
+    public ClientHandler(final Server server, final Socket socket, InetAddress address, ObjectInputStream objectInputStream, ObjectOutputStream objectOutputStream, String playerName)
     {
         this.server = server;
         this.socket = socket;
@@ -36,7 +40,7 @@ public class ClientHandler implements Runnable
         this.objectInputStream = objectInputStream;
         this.objectOutputStream = objectOutputStream;
 
-        clientId = "Unknown Client";
+        this.playerName = playerName;
 
         connected = true;
     }
@@ -88,8 +92,6 @@ public class ClientHandler implements Runnable
 
                     if(connected)
                     {
-                        clientId = networkObject.getId();
-
                         if(networkObject instanceof CardHolderNetworkObject)
                         {
                             rebuildCards((CardHolderNetworkObject)networkObject);
@@ -108,24 +110,54 @@ public class ClientHandler implements Runnable
 
     private void rebuildCards(CardHolderNetworkObject cardHolderNetworkObject)
     {
+        validateCards(cardHolderNetworkObject);
+    }
+
+    private void validateCards(CardHolderNetworkObject cardHolderNetworkObject)
+    {
+        System.out.println(session);
+
+        Validator validator = new Validator();
+        validator.add(session);
+
         ArrayList<Card> cards = new ArrayList<Card>(cardHolderNetworkObject.getCards().size());
 
         for(int i=0; i < cardHolderNetworkObject.getCards().size(); i++)
             cards.add(new Card(cardHolderNetworkObject.getCards().get(i)));
-
-        validateCards(cards);
-    }
-
-    private void validateCards(ArrayList<Card> cards)
-    {
-        Validator validator = new Validator();
 
         for(int i=0; i<cards.size(); i++)
             validator.add(cards.get(i));
 
         System.out.println("Server validating");
         validator.validate();
+
+        if(validator.getIntendedRuleSet() != PlayValidator.RULE_SET.ERROR)
+        {
+            for(String name : session.getPlayers(playerName))
+                writeToClients(cardHolderNetworkObject, name);
+        }
+
         System.out.println(validator.getIntendedRuleSet());
+    }
+
+    private void writeToClients(CardHolderNetworkObject cardHolderNetworkObjectString, String otherPlayer)
+    {
+        try
+        {
+            server.getClientHandler(otherPlayer).getObjectOutputStream().writeObject(cardHolderNetworkObjectString);
+            server.getClientHandler(otherPlayer).getObjectOutputStream().flush();
+        }
+        catch(IOException e)
+        {
+            System.out.println("Problem sending out going network object, Client<writeToClients>");
+            System.out.println(e);
+            e.printStackTrace();
+        }
+    }
+
+    public void addSession(Session session)
+    {
+        this.session = session;
     }
 
     /*private void validatePlayerName(PlayerNetworkObject playerNetworkObject)
@@ -137,6 +169,10 @@ public class ClientHandler implements Runnable
             // TODO: MESSAGE BACK TO PLAYER
         }
     }*/
+
+    public ObjectOutputStream getObjectOutputStream() {
+        return objectOutputStream;
+    }
 
     public void close()
     {
