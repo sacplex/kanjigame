@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 import java.awt.*;
+import java.util.Comparator;
 
 public class Card implements Comparable<Card>
 {
@@ -426,12 +427,69 @@ public class Card implements Comparable<Card>
             moveUpY = 0;
     }
 
+    public static Comparator<Card> sortCards()
+    {
+        return new Comparator<Card>() {
+            @Override
+            public int compare(Card o1, Card o2) {
+                return o1.cardIndex - o2.getCardIndex();
+            }
+        };
+    }
+
+    public static Comparator<Card> sortWithOtherPlayersCards()
+    {
+        return new Comparator<Card>() {
+            @Override
+            public int compare(Card o1, Card o2) {
+                Integer y = o1.getDestUpY();
+                int result = y.compareTo(o2.getDestUpY());
+
+                if (result != 0)
+                    return y;
+                else
+                    return o1.cardIndex - o2.getCardIndex();
+
+            }
+        };
+    }
+
     @Override
     public int compareTo(Card card) {
 
-        int index = card.getCardIndex();
 
-        return cardIndex - index;
+            /*String x1 = ((Person) o1).getName();
+            String x2 = ((Person) o2).getName();
+            int sComp = x1.compareTo(x2);
+
+            if (sComp != 0) {
+                return sComp;
+            } else {
+                Integer x1 = ((Person) o1).getAge();
+                Integer x2 = ((Person) o2).getAge();
+                return x1.compareTo(x2);
+            }*/
+
+        /*if(destUpY == 0)
+        {
+            Integer index = cardIndex;
+            return index.compareTo(card.getCardIndex());
+        }
+        else
+        {*/
+            /*Integer y = destUpY;
+            int result = y.compareTo(card.getDestUpY());
+
+            if (result != 0)
+                return y;
+            else {*/
+                //Integer y = destUpY;
+                //return y.compareTo(card.getDestUpY());
+
+                Integer index = cardIndex;
+                return index.compareTo(card.getCardIndex());
+            //}
+        //}
     }
 
     public void flipCard() { drawFront = !drawFront; }

@@ -11,6 +11,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+import java.util.Collections;
+
 public class Game
 {
     public final static int WIDTH = 1280;

@@ -63,12 +63,13 @@ public class PlayerBoard
         Card card;
         int i;
 
-        Collections.sort(cards);
+        Collections.sort(cards, Card.sortWithOtherPlayersCards());
+        //Collections.sort(cards);
 
         /*for(int j=0; j<NUMBER_OF_STARTING_CARDS; j++)
             cards.get(j).resetMoveUp();*/
 
-        for(i=0; i < NUMBER_OF_STARTING_CARDS; i++)
+        for(i=0; i < cards.size(); i++)
         {
             if (cards.get(i).isPlayingIntersected(x, y, this)) {
 
@@ -78,7 +79,6 @@ public class PlayerBoard
                     System.out.println("drag card");
                     cards.get(i).moveUp();
                 }
-
 
                 System.out.println("Post PlayArea.getDragingCard(): " + PlayArea.getDragingCard());
             }
@@ -102,6 +102,8 @@ public class PlayerBoard
                 }
                 else if(cards.get(i).getCardState() == Card.CARD_STATE.Playing)
                 {
+                    //Collections.sort(cards, Card.sortWithOtherPlayersCards());
+
                     if(!PlayArea.getDragingCard())
                     {
                         System.out.println("Back To Front");
@@ -222,12 +224,22 @@ public class PlayerBoard
 
         boolean moveIncomingCardsUp = true;
 
-        for(int i=0; i<this.cards.size(); i++)
+        /*for(int i=0; i<this.cards.size(); i++)
         {
             if(this.cards.get(i).getCardState() == Card.CARD_STATE.Played && this.cards.get(i).getDestUpY() == 0)
             {
                 PlayArea.getCardIndices().get(this.cards.get(i).getCardIndex()).reLock2();
                 this.cards.remove(i);
+            }
+        }*/
+
+        for(int i=0; i<this.cards.size(); i++)
+        {
+            if(this.cards.get(i).getCardState() != Card.CARD_STATE.Pre_Play)
+            {
+                PlayArea.getCardIndices().get(this.cards.get(i).getCardIndex()).reLock2();
+                this.cards.remove(i);
+                i--;
             }
         }
 
