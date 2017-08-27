@@ -231,8 +231,6 @@ public class PlayerBoard
             }
         }
 
-        System.out.println(moveIncomingCardsUp);
-
         for(int i=0; i<cards.size(); i++)
         {
             cards.get(i).buildGraphics(this.imageIO, 0,0);
