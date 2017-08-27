@@ -9,6 +9,8 @@ public class CardNetworkObject extends NetworkObject
     private String onyomi;
     private String englsih;
 
+    private int cardIndex;
+
     public void setStrokeNumber(int strokeNumber) { this.strokeNumber = strokeNumber; }
 
     public int getStrokeNumber() { return strokeNumber; }
@@ -32,4 +34,8 @@ public class CardNetworkObject extends NetworkObject
     public void setEnglsih(String englsih) { this.englsih = englsih; }
 
     public String getEnglsih() { return englsih; }
+
+    public void setCardIndex(int cardIndex) { this.cardIndex = cardIndex; }
+
+    public int getCardIndex() { return cardIndex; }
 }

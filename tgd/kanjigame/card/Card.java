@@ -153,6 +153,7 @@ public class Card implements Comparable<Card>
         this.kunyomi = cardNetworkObject.getKunyomi();
         this.onyomi = cardNetworkObject.getOnyomi();
         this.shortEnglish = cardNetworkObject.getEnglsih();
+        this.cardIndex = cardNetworkObject.getCardIndex();
     }
 
     public void buildGraphics(ImageIO imageIO, int x, int y)

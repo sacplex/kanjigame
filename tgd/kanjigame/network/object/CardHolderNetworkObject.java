@@ -22,6 +22,7 @@ public class CardHolderNetworkObject extends NetworkObject
         cardNetworkObject.setKunyomi(card.getKunyomi());
         cardNetworkObject.setOnyomi(card.getOnyomi());
         cardNetworkObject.setEnglsih(card.getEnglish());
+        cardNetworkObject.setCardIndex(card.getCardIndex());
 
         cards.add(cardNetworkObject);
     }
