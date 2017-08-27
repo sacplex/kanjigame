@@ -215,27 +215,50 @@ public class PlayerBoard
         Collections.sort(cards);
     }
 
-    public void addOtherPlayers(ArrayList<Card> cards)
+    public void addOtherPlayersCards(ArrayList<Card> cards)
     {
-        System.out.println("add Other Players");
+        System.out.println("add Other Players Cards");
         System.out.println(cards.size());
+
+        boolean moveIncomingCardsUp = true;
+
+        for(int i=0; i<this.cards.size(); i++)
+        {
+            if(this.cards.get(i).getCardState() == Card.CARD_STATE.Played && this.cards.get(i).getDestUpY() == 0)
+            {
+                PlayArea.getCardIndices().get(this.cards.get(i).getCardIndex()).reLock2();
+                this.cards.remove(i);
+            }
+        }
+
+        System.out.println(moveIncomingCardsUp);
 
         for(int i=0; i<cards.size(); i++)
         {
             cards.get(i).buildGraphics(this.imageIO, 0,0);
             cards.get(i).toFrontOfCardLarge();
             cards.get(i).setCardState(Card.CARD_STATE.Post_Play);
+
+            //if(moveIncomingCardsUp)
+                cards.get(i).nextPlayerPlayed();
+
             this.cards.add(cards.get(i));
         }
 
-        for(int i=0; i<this.cards.size(); i++)
+        /*for(int i=0; i<this.cards.size(); i++)
+        {
+            if(this.cards.get(i).getCardState() == Card.CARD_STATE.Playing)
+                this.cards.get(i).nextPlayerPlayed();
+        }*/
+
+        /*for(int i=0; i<this.cards.size(); i++)
         {
             if(this.cards.get(i).getCardState() == Card.CARD_STATE.Post_Play)
             {
                 System.out.println("Moving Up Played Card");
-                this.cards.get(i).nextPlayerPlayed();
+
             }
 
-        }
+        }*/
     }
 }

@@ -455,6 +455,8 @@ public class Card implements Comparable<Card>
 
     public void nextPlayerPlayed() { destUpY = -20; }
 
+    public int getDestUpY() { return destUpY; }
+
     public String toString()
     {
         String retString = "";

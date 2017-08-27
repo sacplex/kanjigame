@@ -1,6 +1,5 @@
 package com.tgd.kanjigame.network.client;
 
-import com.tgd.kanjigame.board.PlayArea;
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
@@ -134,7 +133,7 @@ public class Client implements Runnable
 
                 if(networkObject instanceof  CardHolderNetworkObject)
                 {
-                    playerBoard.addOtherPlayers(rebuildCards((CardHolderNetworkObject) networkObject));
+                    playerBoard.addOtherPlayersCards(rebuildCards((CardHolderNetworkObject) networkObject));
                 }
             }
             catch (ClassNotFoundException e)
