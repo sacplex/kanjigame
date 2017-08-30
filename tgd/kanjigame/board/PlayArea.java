@@ -45,32 +45,32 @@ public class PlayArea
             card.updateBoxLocation();
             PlayArea.setDragingCard(false);
 
-            if (box.intersects(card.getFrontOfCard().getBox()))
+            if (card.getCardState() != Card.CARD_STATE.Playing)
             {
-                System.out.println("Card has intersected with playing area");
-                card.reverseBoxLocation();
-                card.toFrontOfCardLarge();
-                //card.setCardIndex(PlayArea.getNumberOfCardsPlaying());
-                int cardIndex = 0;
-
-                for(int i=0; i < PlayerBoard.NUMBER_OF_STARTING_CARDS; i++)
+                if (box.intersects(card.getFrontOfCard().getBox()))
                 {
-                    if(!cardIndices.get(i).hasLock())
-                    {
-                        card.setCardIndex(cardIndices.get(i).getNextIndex());
+                    System.out.println("Card has intersected with playing area");
+                    card.reverseBoxLocation();
+                    card.toFrontOfCardLarge();
+                    //card.setCardIndex(PlayArea.getNumberOfCardsPlaying());
 
-                        break;
+                    for (int i = 0; i < PlayerBoard.NUMBER_OF_STARTING_CARDS; i++) {
+                        if (!cardIndices.get(i).hasLock()) {
+                            card.setCardIndex(cardIndices.get(i).getNextIndex());
+
+                            break;
+                        }
                     }
+
+                    card.buildPlayingBox();
+
+                    card.setCardState(Card.CARD_STATE.Playing);
+                    retIntersection = true;
                 }
-
-                card.buildPlayingBox(cardIndex);
-
-                card.setCardState(Card.CARD_STATE.Playing);
-                retIntersection = true;
-            }
-            else
-            {
-                card.reverseBoxLocation();
+                else
+                {
+                    card.reverseBoxLocation();
+                }
             }
         }
         else
@@ -90,6 +90,8 @@ public class PlayArea
     public static boolean getDragingCard() { return dragingCard; }
 
     public static ArrayList<CardIndex> getCardIndices() { return cardIndices; }
+
+    public static void  resetCardIndices() { for(int i=0; i < PlayerBoard.NUMBER_OF_STARTING_CARDS; i++) cardIndices.get(i).reset(i); }
 
     public void draw(GraphicsContext gc)
     {
@@ -137,6 +139,12 @@ public class PlayArea
         public void reLock2()
         {
             lock = false;
+        }
+
+        public void reset(int index)
+        {
+            lock = false;
+            this.index = index;
         }
 
         public String toString()

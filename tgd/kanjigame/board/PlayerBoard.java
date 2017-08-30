@@ -122,7 +122,7 @@ public class PlayerBoard
             }
         }
 
-        for(i=0; i < NUMBER_OF_STARTING_CARDS; i++)
+        for(i=0; i < cards.size(); i++)
             cards.get(i).setDrag(false);
 
         return null;
@@ -212,7 +212,7 @@ public class PlayerBoard
         card.getFrontOfCard().setLocation(tempX, tempY);
         card.getPlayingBox().x = tempX;
         card.getPlayingBox().y = tempY;
-        card.setCardIndex(tempCardIndex);
+        //card.setCardIndex(tempCardIndex);
 
         Collections.sort(cards);
     }
@@ -242,6 +242,8 @@ public class PlayerBoard
                 i--;
             }
         }
+
+        PlayArea.resetCardIndices();
 
         for(int i=0; i<cards.size(); i++)
         {

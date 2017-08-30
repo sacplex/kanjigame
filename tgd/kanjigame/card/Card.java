@@ -361,7 +361,7 @@ public class Card implements Comparable<Card>
         moveUpY = 0;
     }
 
-    public void buildPlayingBox(int length)
+    public void buildPlayingBox()
     {
         //if(cardIndex == PlayArea.getNumberOfCardsPlaying())
             playingBox = new Rectangle(frontOfCardLarge.getX() + 95 - (MULTICARDOFFSETX * (cardIndex-1)),

@@ -50,7 +50,7 @@ public class Client implements Runnable
 
     private void connect(String clientName) throws UnknownHostException, IOException
     {
-        connection = new Socket("127.0.0.1", PORT);
+        connection = new Socket("tgd.net.au", PORT);
 
         if(connection != null)
             connected = true;
