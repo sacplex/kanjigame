@@ -1,5 +1,6 @@
 package com.tgd.kanjigame.players;
 
+import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.client.Client;
 
 public class Player

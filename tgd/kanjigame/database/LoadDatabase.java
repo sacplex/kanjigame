@@ -30,7 +30,7 @@ public class LoadDatabase
 
         try
         {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanji", "admin", "admin");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanji", "admin", "q2w3e4r5t6y7u8");
 
             preparedStatement = connection.prepareStatement(ACCESS_ALL_KANJI_DATA);
 

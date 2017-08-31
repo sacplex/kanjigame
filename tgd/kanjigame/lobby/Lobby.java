@@ -1,22 +1,55 @@
 package com.tgd.kanjigame.lobby;
 
+import com.tgd.kanjigame.card.Card;
+import com.tgd.kanjigame.database.LoadDatabase;
+
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Lobby
 {
+    public static final int CAPABILITY = 4;
+
     private ArrayList<Session> sessions;
+    private ArrayList<Card> cards;
+
+    private Random random;
 
     public Lobby()
     {
         sessions = new ArrayList<>();
     }
 
+    public Lobby(LoadDatabase database)
+    {
+        random = new Random();
+
+        sessions = new ArrayList<>();
+        cards = new ArrayList<>(Session.NUMBER_OF_STARTING_CARDS * CAPABILITY);
+
+        for(int i=0; i < CAPABILITY; i++)
+        {
+            for(int j=0; j < Session.NUMBER_OF_STARTING_CARDS; j++)
+            {
+                cards.add(database.popSkewedUniqueCard());
+            }
+        }
+
+        database.reset();
+    }
+
     public void add(String player)
     {
         if(sessions.size() == 0) // Create the first session, if empty
         {
-            Session session = new Session(4);
+            Session session = new Session(CAPABILITY);
             session.addPlayer(player);
+
+            for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
+            {
+                Card card = cards.remove(random.nextInt(cards.size()-1));
+                session.addCards(card);
+            }
 
             sessions.add(session);
         }
@@ -24,13 +57,27 @@ public class Lobby
         {
             if(sessions.get(sessions.size()-1).isFull())
             {
-                Session session = new Session(4);
+                Session session = new Session(CAPABILITY);
                 session.addPlayer(player);
+
+                for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
+                {
+                    Card card = cards.remove(random.nextInt(cards.size()-1));
+                    session.addCards(card);
+                }
 
                 sessions.add(session);
             }
             else
-                sessions.get(sessions.size()-1).addPlayer(player);
+            {
+                sessions.get(sessions.size() - 1).addPlayer(player);
+
+                for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
+                {
+                    Card card = cards.remove(random.nextInt(cards.size()-1));
+                    sessions.get(sessions.size() - 1).addCards(card);
+                }
+            }
         }
     }
 

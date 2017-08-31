@@ -6,6 +6,7 @@ import com.tgd.kanjigame.control.Button;
 import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
+import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
 import com.tgd.kanjigame.players.Player;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -27,7 +28,7 @@ public class PlayerBoard
         this.imageIO = imageIO;
         Card card;
         playArea = new PlayArea(192, 144, Game.WIDTH/2 + Game.WIDTH/6, Game.HEIGHT/3);
-        playingButton = new Button(imageIO.getImage("play_button.png"), Game.WIDTH/2 - 100, 100);
+
 
         for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
         {
@@ -46,11 +47,35 @@ public class PlayerBoard
             cards.get(i).buildGraphics(imageIO,260 + ((i-NUMBER_OF_STARTING_CARDS/2)*125), 420);
     }
 
+    public PlayerBoard(InitialCardHolderNetworkObject initialCardHolderNetworkObject)
+    {
+        Card card;
+        playArea = new PlayArea(192, 144, Game.WIDTH/2 + Game.WIDTH/6, Game.HEIGHT/3);
+
+        for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
+        {
+            cards.add(new Card(initialCardHolderNetworkObject.get()));
+        }
+    }
+
+    public void buildGraphics(ImageIO imageIO)
+    {
+        this.imageIO = imageIO;
+        playingButton = new Button(this.imageIO.getImage("play_button.png"), Game.WIDTH/2 - 100, 100);
+
+        for(int i=0; i< NUMBER_OF_STARTING_CARDS/2; i++)
+            cards.get(i).buildGraphics(this.imageIO, 260 + (i*125), 560);
+
+        for(int i=NUMBER_OF_STARTING_CARDS/2; i< NUMBER_OF_STARTING_CARDS; i++)
+            cards.get(i).buildGraphics(this.imageIO,260 + ((i-NUMBER_OF_STARTING_CARDS/2)*125), 420);
+    }
+
     public void draw(GraphicsContext gc)
     {
         playArea.draw(gc);
 
-        playingButton.draw(gc);
+        if(playingButton != null)
+            playingButton.draw(gc);
 
         for(int i=0; i < cards.size(); i++)
         {
@@ -273,4 +298,6 @@ public class PlayerBoard
 
         }*/
     }
+
+    public void setImageIO(ImageIO imageIO) { this.imageIO = imageIO; }
 }

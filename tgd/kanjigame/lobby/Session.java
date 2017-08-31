@@ -1,10 +1,18 @@
 package com.tgd.kanjigame.lobby;
 
+import com.tgd.kanjigame.card.Card;
+import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
+import com.tgd.kanjigame.network.object.InitialCardNetworkObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Session
 {
+    public static final int NUMBER_OF_STARTING_CARDS = 12;
+
+    private InitialCardHolderNetworkObject initialCardHolderNetworkObject;
+
     private ArrayList<String> players;
 
     private int capability;
@@ -16,6 +24,8 @@ public class Session
 
     public Session(int capability)
     {
+        initialCardHolderNetworkObject = new InitialCardHolderNetworkObject();
+
         isEmpty = true;
         isFull = false;
 
@@ -91,6 +101,16 @@ public class Session
         }
 
         return result;
+    }
+
+    public void addCards(Card card)
+    {
+        initialCardHolderNetworkObject.add(card);
+    }
+
+    public InitialCardHolderNetworkObject getInitialCardHolderNetworkObject()
+    {
+        return initialCardHolderNetworkObject;
     }
 
     public void newTurn()

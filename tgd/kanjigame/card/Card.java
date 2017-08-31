@@ -6,6 +6,7 @@ import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.debug.Debug;
 import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.CardNetworkObject;
+import com.tgd.kanjigame.network.object.InitialCardNetworkObject;
 import com.tgd.kanjigame.sprite.CardSprite;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -83,21 +84,29 @@ public class Card implements Comparable<Card>
         if (shorterEnglish.substring(shorterEnglish.length()-1).equals(","))
             shorterEnglish = shorterEnglish.substring(0, shorterEnglish.length() - 1);
 
-        if(strokeCard != null && strokeCard.getKunyomi().length() != 0)
+        if(strokeCard != null)
         {
-            String [] kunyomiArray = strokeCard.getKunyomi().split(".");
+            if(strokeCard.getKunyomi() != null && strokeCard.getKanjiCharacter().length() != 0) {
+                String[] kunyomiArray = strokeCard.getKunyomi().split(".");
 
-            if(kunyomiArray.length > 0)
-                kunyomi = kunyomiArray[0];
-            else
-                kunyomi = strokeCard.getKunyomi();
+                if (kunyomiArray.length > 0)
+                    kunyomi = kunyomiArray[0];
+                else
+                    kunyomi = strokeCard.getKunyomi();
+            }
         }
 
-        if(strokeCard != null && strokeCard.getOnyomi().length() != 0)
-            onyomi = strokeCard.getOnyomi();
+        if(strokeCard != null )
+        {
+            if(strokeCard.getOnyomi() != null && strokeCard.getOnyomi().length() != 0)
+                onyomi = strokeCard.getOnyomi();
+        }
 
-        if(strokeCard!= null && strokeCard.getKanjiCharacter().length() != 0)
-            kanji = strokeCard.getKanjiCharacter();
+        if(strokeCard!= null)
+        {
+            if(strokeCard.getKanjiCharacter() != null && strokeCard.getKanjiCharacter().length() != 0)
+                kanji = strokeCard.getKanjiCharacter();
+        }
 
         drawSmaller = shortEnglish.length() > 12 ? true : false;
         drawFront = false;
@@ -144,6 +153,19 @@ public class Card implements Comparable<Card>
         drawFront = false;
 
         original = true;
+    }
+
+    public Card(InitialCardNetworkObject initialCardNetworkObject)
+    {
+        this(new StrokeCard(
+                        initialCardNetworkObject.getKanji_character(),
+                        initialCardNetworkObject.getOnyomi(),
+                        initialCardNetworkObject.getKunyomi(),
+                        "default kana"
+                ),
+                initialCardNetworkObject.getColour(),
+                initialCardNetworkObject.getStroke() + "",
+                initialCardNetworkObject.getEnglish());
     }
 
     public Card(CardNetworkObject cardNetworkObject)

@@ -1,6 +1,8 @@
 package com.tgd.kanjigame.network.server;
 
+import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.lobby.Lobby;
+import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
 import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 
@@ -8,6 +10,7 @@ import javax.net.ServerSocketFactory;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -31,7 +34,7 @@ public class Server
 
         clients = new HashMap<>();
 
-        lobby = new Lobby();
+        lobby = new Lobby(LoadDatabase.getInstance());
 
         setUp(port);
     }
@@ -106,6 +109,8 @@ public class Server
                 client = new ClientHandler(this, connection, connection.getInetAddress(), objectInputStream, objectOutputStream, playerNetworkObject.getName());
                 client.addSession(lobby.getSession(playerNetworkObject.getName()));
 
+                writeCardsToClient(lobby.getSession(playerNetworkObject.getName()).getInitialCardHolderNetworkObject());
+
                 clients.put(playerNetworkObject.getName(), client);
 
                 clients.get(playerNetworkObject.getName()).startClient();
@@ -149,6 +154,21 @@ public class Server
             validPlayerName = true;
 
         return validPlayerName;
+    }
+
+    private void writeCardsToClient(InitialCardHolderNetworkObject initialCardHolderNetworkObject)
+    {
+        System.out.println("Writing Player's Card to Client");
+
+        try
+        {
+            objectOutputStream.writeObject(initialCardHolderNetworkObject);
+            objectOutputStream.flush();
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
     }
 
     public static void main(String [] args)

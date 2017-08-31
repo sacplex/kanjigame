@@ -41,9 +41,6 @@ public class KanjiGame extends Application
 
         imageIO.loadImages();
 
-
-        LoadDatabase loadDatabase = LoadDatabase.getInstance();
-
         System.out.println("Enter your player's name...");
 
         Scanner scanner = new Scanner(System.in);
@@ -53,12 +50,18 @@ public class KanjiGame extends Application
 
         player.setClient(new Client(clientName));
         player.getClient().sendPlayerToServer(new PlayerNetworkObject(player.getName()));
+        player.getClient().receiveInitiallyFromServer();
+        player.getClient().getPlayerBoard().buildGraphics(imageIO);
+        player.getClient().startReaderThread();
+        //player.getClient().getPlayerBoard().setImageIO(imageIO);
 
-        PlayerBoard playerBoard = new PlayerBoard(loadDatabase, imageIO);
-        playerBoard.setPlayer(player);
+
+
+
+        player.getClient().getPlayerBoard().setPlayer(player);
 
         Game game = new Game(gc);
-        game.addPlayerBoard(playerBoard);
+        game.addPlayerBoard(player.getClient().getPlayerBoard());
         game.addScene(scene);
 
         game.initMouse();

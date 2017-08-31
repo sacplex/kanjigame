@@ -2,7 +2,9 @@ package com.tgd.kanjigame.network.client;
 
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
+import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
+import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
 import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 
@@ -73,7 +75,7 @@ public class Client implements Runnable
                 System.out.println("IOException: " + e);
             }
 
-            startReaderThread();
+
         }
         else
         {
@@ -81,7 +83,7 @@ public class Client implements Runnable
         }
     }
 
-    private void startReaderThread()
+    public void startReaderThread()
     {
         readerThread = new Thread(this);
         running = true;
@@ -131,7 +133,7 @@ public class Client implements Runnable
             {
                 networkObject = (NetworkObject)objectInputStream.readObject();
 
-                if(networkObject instanceof  CardHolderNetworkObject)
+                if(networkObject instanceof CardHolderNetworkObject)
                 {
                     playerBoard.addOtherPlayersCards(rebuildCards((CardHolderNetworkObject) networkObject));
                 }
@@ -146,6 +148,32 @@ public class Client implements Runnable
                 System.out.println("<Client - IOException, can not read network object>");
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void receiveInitiallyFromServer()
+    {
+        NetworkObject networkObject;
+
+        try
+        {
+            networkObject = (NetworkObject) objectInputStream.readObject();
+
+            if(networkObject instanceof InitialCardHolderNetworkObject)
+            {
+                System.out.println("Got Player's Cards");
+                playerBoard = new PlayerBoard((InitialCardHolderNetworkObject)networkObject);
+            }
+        }
+        catch (ClassNotFoundException e)
+        {
+            System.out.println("<Client - ClassNotFoundException, can not convert network object>");
+            e.printStackTrace();
+        }
+        catch(IOException e)
+        {
+            System.out.println("<Client - IOException, can not read network object>");
+            e.printStackTrace();
         }
     }
 
@@ -175,4 +203,6 @@ public class Client implements Runnable
     {
         this.playerBoard = playerBoard;
     }
+
+    public PlayerBoard getPlayerBoard() { return playerBoard; }
 }
