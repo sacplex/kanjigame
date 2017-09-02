@@ -2,6 +2,7 @@ package com.tgd.kanjigame.lobby;
 
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.database.LoadDatabase;
+import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -44,12 +45,17 @@ public class Lobby
         {
             Session session = new Session(CAPABILITY);
             session.addPlayer(player);
+            InitialCardHolderNetworkObject initialCardHolderNetworkObject = new InitialCardHolderNetworkObject();
 
             for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
             {
                 Card card = cards.remove(random.nextInt(cards.size()-1));
-                session.addCards(card);
+                initialCardHolderNetworkObject.add(card);
             }
+
+            session.addCards(player, initialCardHolderNetworkObject);
+
+            System.out.println("Number of Cards: " + cards.size());
 
             sessions.add(session);
         }
@@ -57,26 +63,35 @@ public class Lobby
         {
             if(sessions.get(sessions.size()-1).isFull())
             {
+                InitialCardHolderNetworkObject initialCardHolderNetworkObject = new InitialCardHolderNetworkObject();
+
                 Session session = new Session(CAPABILITY);
                 session.addPlayer(player);
 
                 for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
                 {
                     Card card = cards.remove(random.nextInt(cards.size()-1));
-                    session.addCards(card);
+                    initialCardHolderNetworkObject.add(card);
                 }
+
+                session.addCards(player, initialCardHolderNetworkObject);
 
                 sessions.add(session);
             }
             else
             {
+                InitialCardHolderNetworkObject initialCardHolderNetworkObject = new InitialCardHolderNetworkObject();
+
                 sessions.get(sessions.size() - 1).addPlayer(player);
 
                 for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
                 {
                     Card card = cards.remove(random.nextInt(cards.size()-1));
-                    sessions.get(sessions.size() - 1).addCards(card);
+
+                    initialCardHolderNetworkObject.add(card);
                 }
+
+                sessions.get(sessions.size() - 1).addCards(player, initialCardHolderNetworkObject);
             }
         }
     }

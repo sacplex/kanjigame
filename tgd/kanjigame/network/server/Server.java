@@ -109,7 +109,7 @@ public class Server
                 client = new ClientHandler(this, connection, connection.getInetAddress(), objectInputStream, objectOutputStream, playerNetworkObject.getName());
                 client.addSession(lobby.getSession(playerNetworkObject.getName()));
 
-                writeCardsToClient(lobby.getSession(playerNetworkObject.getName()).getInitialCardHolderNetworkObject());
+                writeCardsToClient(lobby.getSession(playerNetworkObject.getName()).getInitialCardHolderNetworkObject(playerNetworkObject.getName()));
 
                 clients.put(playerNetworkObject.getName(), client);
 

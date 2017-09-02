@@ -6,12 +6,13 @@ import com.tgd.kanjigame.network.object.InitialCardNetworkObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Session
 {
     public static final int NUMBER_OF_STARTING_CARDS = 12;
 
-    private InitialCardHolderNetworkObject initialCardHolderNetworkObject;
+    private HashMap<String, InitialCardHolderNetworkObject> initialCardHolderNetworkObjects;
 
     private ArrayList<String> players;
 
@@ -24,7 +25,7 @@ public class Session
 
     public Session(int capability)
     {
-        initialCardHolderNetworkObject = new InitialCardHolderNetworkObject();
+        initialCardHolderNetworkObjects = new HashMap<>();
 
         isEmpty = true;
         isFull = false;
@@ -103,14 +104,14 @@ public class Session
         return result;
     }
 
-    public void addCards(Card card)
+    public void addCards(String player, InitialCardHolderNetworkObject initialCardHolderNetworkObject)
     {
-        initialCardHolderNetworkObject.add(card);
+        initialCardHolderNetworkObjects.put(player, initialCardHolderNetworkObject);
     }
 
-    public InitialCardHolderNetworkObject getInitialCardHolderNetworkObject()
+    public InitialCardHolderNetworkObject getInitialCardHolderNetworkObject(String player)
     {
-        return initialCardHolderNetworkObject;
+        return initialCardHolderNetworkObjects.get(player);
     }
 
     public void newTurn()

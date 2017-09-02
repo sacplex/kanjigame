@@ -55,6 +55,7 @@ public class PlayerBoard
         for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
         {
             cards.add(new Card(initialCardHolderNetworkObject.get()));
+            System.out.println(cards.get(i).getStrokesValue());
         }
     }
 
