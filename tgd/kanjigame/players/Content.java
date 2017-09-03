@@ -29,13 +29,21 @@ public class Content
         this.position = position;
     }
 
+    public String getNextPosition(int capability)
+    {
+        if(capability - 1 == position)
+            return POSITIONS[0];
+        else
+            return POSITIONS[position + 1];
+    }
+
     public int getPosition()
     {
         return position;
     }
 
-    public String getPLayerPosition()
+    public String getPlayerPosition()
     {
-        return POSITIONS[position] + " Position";
+        return POSITIONS[position];
     }
 }

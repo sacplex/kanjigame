@@ -13,7 +13,7 @@ public class PlayOrPassNetworkObject extends NetworkObject
         this.cardHolderNetworkObject = cardHolderNetworkObject;
         this.position = position;
 
-        if(cardHolderNetworkObject.getCards().size() == 0)
+        if(cardHolderNetworkObject == null)
             play_state = PLAY_STATE.PASS;
         else
             play_state = PLAY_STATE.PLAY;
@@ -27,6 +27,11 @@ public class PlayOrPassNetworkObject extends NetworkObject
     public CardHolderNetworkObject getCardHolderNetworkObject()
     {
         return cardHolderNetworkObject;
+    }
+
+    public void setPosition(String position)
+    {
+        this.position = position;
     }
 
     public String getPosition() {

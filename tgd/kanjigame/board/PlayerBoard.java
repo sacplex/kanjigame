@@ -18,9 +18,11 @@ import java.util.Collections;
 public class PlayerBoard
 {
     public static final int NUMBER_OF_STARTING_CARDS = 12;
+    public static boolean playing = false;
     private ArrayList<Card> cards = new ArrayList<>(NUMBER_OF_STARTING_CARDS);
     private PlayArea playArea;
     private Button playingButton;
+    private Button passButton;
     private String position;
     private String gameState;
     private ImageIO imageIO;
@@ -32,7 +34,6 @@ public class PlayerBoard
         this.imageIO = imageIO;
         Card card;
         playArea = new PlayArea(192, 144, Game.WIDTH/2 + Game.WIDTH/6, Game.HEIGHT/3);
-
 
         for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
         {
@@ -59,20 +60,23 @@ public class PlayerBoard
         for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
         {
             cards.add(new Card(setupNetworkObject.getInitialCardHolderNetworkObject().get()));
-            position = setupNetworkObject.getPosition();
+
             System.out.println(cards.get(i).getStrokesValue());
         }
 
-        if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.WAIT)
-            gameState = "Please wait for other players...";
-        else if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.PLAY)
-            gameState = null;
+        position = setupNetworkObject.getPosition();
+
+        if(position.equals("First"))
+            playing = true;
     }
+
+
 
     public void buildGraphics(ImageIO imageIO)
     {
         this.imageIO = imageIO;
-        playingButton = new Button(this.imageIO.getImage("play_button.png"), Game.WIDTH/2 - 100, 100);
+        playingButton = new Button(this.imageIO.getImage("play_button.png"), Game.WIDTH/4 - 100, 100);
+        passButton = new Button(this.imageIO.getImage("pass_button.png"), Game.WIDTH/2 + Game.WIDTH/4 - 100, 100);
 
         for(int i=0; i< NUMBER_OF_STARTING_CARDS/2; i++)
             cards.get(i).buildGraphics(this.imageIO, 260 + (i*125), 560);
@@ -83,7 +87,7 @@ public class PlayerBoard
 
     public void draw(GraphicsContext gc)
     {
-        playArea.draw(gc);
+        //playArea.draw(gc);
 
         if(position != null)
         {
@@ -99,6 +103,9 @@ public class PlayerBoard
 
         if(playingButton != null)
             playingButton.draw(gc);
+
+        if(passButton != null)
+            passButton.draw(gc);
 
         for(int i=0; i < cards.size(); i++)
         {
@@ -207,6 +214,15 @@ public class PlayerBoard
                 player.getClient().sendPlayOrPassToServer(playOrPassNetworkObject);
             }
         }
+        else if(passButton.intersected(x,y))
+        {
+            PlayOrPassNetworkObject playOrPassNetworkObject = new PlayOrPassNetworkObject(
+                    null,
+                    position
+            );
+
+            player.getClient().sendPlayOrPassToServer(playOrPassNetworkObject);
+        }
     }
 
     public Card getUpCard()
@@ -275,6 +291,11 @@ public class PlayerBoard
         gameState = state;
     }
 
+    public String getPosition()
+    {
+        return position;
+    }
+
     public void addOtherPlayersCards(ArrayList<Card> cards)
     {
         System.out.println("add Other Players Cards");
@@ -330,6 +351,23 @@ public class PlayerBoard
             }
 
         }*/
+    }
+
+    public void setGameState(SetupNetworkObject setupNetworkObject)
+    {
+        if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.WAIT)
+            gameState = "Please wait for other players...";
+        else if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.PLAY)
+        {
+            if(!setupNetworkObject.getPosition().equals(position)) {
+                gameState = "Waiting for other players to play";
+                playing = false;
+            }
+            else {
+                gameState = null;
+                playing = true;
+            }
+        }
     }
 
     public void setImageIO(ImageIO imageIO) { this.imageIO = imageIO; }

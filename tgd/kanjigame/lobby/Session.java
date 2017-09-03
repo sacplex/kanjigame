@@ -1,13 +1,9 @@
 package com.tgd.kanjigame.lobby;
 
-import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
-import com.tgd.kanjigame.network.object.InitialCardNetworkObject;
-import com.tgd.kanjigame.network.object.PlayOrPassNetworkObject;
 import com.tgd.kanjigame.network.object.SetupNetworkObject;
 import com.tgd.kanjigame.players.Content;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -107,6 +103,11 @@ public class Session
         return destPlayers;
     }
 
+    public Content getPlayerContents(String player)
+    {
+        return playerContents.get(player);
+    }
+
     public boolean isPlayerWithinSession(String player)
     {
         boolean result = false;
@@ -146,7 +147,7 @@ public class Session
         {
             setupNetworkObject = new SetupNetworkObject(
                     playerContents.get(player).getInitialCardHolderNetworkObject(),
-                    playerContents.get(player).getPLayerPosition(),
+                    playerContents.get(player).getPlayerPosition(),
                     SetupNetworkObject.GAME_STATE.PLAY
             );
         }
@@ -154,7 +155,7 @@ public class Session
         {
             setupNetworkObject = new SetupNetworkObject(
                     playerContents.get(player).getInitialCardHolderNetworkObject(),
-                    playerContents.get(player).getPLayerPosition(),
+                    playerContents.get(player).getPlayerPosition(),
                     SetupNetworkObject.GAME_STATE.WAIT
             );
         }
@@ -181,6 +182,8 @@ public class Session
     {
         return turn;
     }
+
+    public int getCapability() { return capability; }
 
     public String toString()
     {

@@ -116,7 +116,10 @@ public class ClientHandler implements Runnable
 
     private void rebuildCards(PlayOrPassNetworkObject playOrPassNetworkObject)
     {
-        validateCards(playOrPassNetworkObject);
+        if(playOrPassNetworkObject.getPlayState() == PlayOrPassNetworkObject.PLAY_STATE.PLAY)
+            validateCards(playOrPassNetworkObject);
+        else if(playOrPassNetworkObject.getPlayState() == PlayOrPassNetworkObject.PLAY_STATE.PASS)
+            pass(playOrPassNetworkObject);
     }
 
     private void validateCards(PlayOrPassNetworkObject playOrPassNetworkObject)
@@ -128,22 +131,26 @@ public class ClientHandler implements Runnable
 
         ArrayList<Card> cards = new ArrayList<Card>(playOrPassNetworkObject.getCardHolderNetworkObject().getCards().size());
 
-        for(int i=0; i < playOrPassNetworkObject.getCardHolderNetworkObject().getCards().size(); i++)
+        for (int i = 0; i < playOrPassNetworkObject.getCardHolderNetworkObject().getCards().size(); i++)
             cards.add(new Card(playOrPassNetworkObject.getCardHolderNetworkObject().getCards().get(i)));
 
-        for(int i=0; i<cards.size(); i++)
+        for (int i = 0; i < cards.size(); i++)
             validator.add(cards.get(i));
 
         System.out.println("Server validating");
         validator.validate();
 
-        if(validator.getIntendedRuleSet() != PlayValidator.RULE_SET.ERROR)
-        {
-            for(String name : session.getPlayers(playerName))
+        playOrPassNetworkObject.setPosition(session.getPlayerContents(playerName).getNextPosition(session.getCapability()));
+
+        if (validator.getIntendedRuleSet() != PlayValidator.RULE_SET.ERROR) {
+            for (String name : session.getPlayers(playerName))
                 writeToClients(playOrPassNetworkObject, name);
-        }
+
 
         System.out.println(validator.getIntendedRuleSet());
+        }
+
+
     }
 
     private void writeToClients(PlayOrPassNetworkObject playOrPassNetworkObject, String otherPlayer)
@@ -159,6 +166,16 @@ public class ClientHandler implements Runnable
             System.out.println(e);
             e.printStackTrace();
         }
+    }
+
+    private void pass(PlayOrPassNetworkObject playOrPassNetworkObject)
+    {
+        System.out.println(playOrPassNetworkObject.getPosition());
+        playOrPassNetworkObject.setPosition(session.getPlayerContents(playerName).getNextPosition(session.getCapability()));
+        System.out.println(playOrPassNetworkObject.getPosition());
+
+        for (String name : session.getPlayers(playerName))
+            writeToClients(playOrPassNetworkObject, name);
     }
 
     public void addSession(Session session)

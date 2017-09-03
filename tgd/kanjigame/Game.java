@@ -32,7 +32,7 @@ public class Game
 
     public void initMouse()
     {
-        if(scene != null)
+        if(scene != null && PlayerBoard.playing)
         {
             scene.setOnMousePressed(event -> {
                 playerBoard.hasMouseIntersectedWithButton((int)event.getX(), (int)event.getY());

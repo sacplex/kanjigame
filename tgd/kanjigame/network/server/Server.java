@@ -170,11 +170,6 @@ public class Server
             System.out.println(e);
         }
 
-        System.out.println("I am player: " + playerName);
-
-        for(String otherPlayer : lobby.getSession(playerName).getPlayers(playerName))
-            System.out.println("Other players: " + otherPlayer);
-
         for(String otherPlayer : lobby.getSession(playerName).getPlayers(playerName))
             writeToClients(setupNetworkObject, otherPlayer);
     }

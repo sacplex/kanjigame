@@ -1,9 +1,11 @@
 package com.tgd.kanjigame.network.client;
 
+import com.tgd.kanjigame.board.PlayArea;
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.*;
+import com.tgd.kanjigame.players.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -135,12 +137,25 @@ public class Client implements Runnable
 
                 if(networkObject instanceof PlayOrPassNetworkObject)
                 {
-                    playerBoard.addOtherPlayersCards(rebuildCards((PlayOrPassNetworkObject) networkObject));
+                    System.out.println(((PlayOrPassNetworkObject) networkObject).getPosition());
+                    System.out.println(playerBoard.getPosition());
+
+                    if(((PlayOrPassNetworkObject) networkObject).getPosition().equals(playerBoard.getPosition()))
+                        PlayerBoard.playing = true;
+                    else
+                        PlayerBoard.playing = false;
+
+                    playerBoard.setPlayState(null);
+
+                    if(((PlayOrPassNetworkObject) networkObject).getPlayState() == PlayOrPassNetworkObject.PLAY_STATE.PLAY)
+                        playerBoard.addOtherPlayersCards(rebuildCards((PlayOrPassNetworkObject) networkObject));
                 }
                 else if(networkObject instanceof SetupNetworkObject)
                 {
-                    playerBoard.setPlayState(null);
                     System.out.println("New Setup Network Object has arrived");
+                    System.out.println(((SetupNetworkObject)networkObject).getPosition());
+
+                    playerBoard.setGameState((SetupNetworkObject)networkObject);
                 }
             }
             catch (ClassNotFoundException e)
@@ -170,6 +185,10 @@ public class Client implements Runnable
 
                 if(playerBoard == null)
                     playerBoard = new PlayerBoard((SetupNetworkObject)networkObject);
+
+                System.out.println(((SetupNetworkObject)networkObject).getPosition());
+
+                playerBoard.setGameState((SetupNetworkObject)networkObject);
             }
         }
         catch (ClassNotFoundException e)
