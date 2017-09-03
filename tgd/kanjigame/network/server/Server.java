@@ -3,6 +3,7 @@ package com.tgd.kanjigame.network.server;
 import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.lobby.Lobby;
 import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
+import com.tgd.kanjigame.network.object.PlayOrPassNetworkObject;
 import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 import com.tgd.kanjigame.network.object.SetupNetworkObject;
 
@@ -108,7 +109,7 @@ public class Server
                 client = new ClientHandler(this, connection, connection.getInetAddress(), objectInputStream, objectOutputStream, playerNetworkObject.getName());
                 client.addSession(lobby.getSession(playerNetworkObject.getName()));
 
-                writeSetupToClient(lobby.getSession(playerNetworkObject.getName()).getSetupNetworkObject(playerNetworkObject.getName()));
+                writeSetupToClient(playerNetworkObject.getName(), lobby.getSession(playerNetworkObject.getName()).getSetupNetworkObject(playerNetworkObject.getName()));
 
                 clients.put(playerNetworkObject.getName(), client);
 
@@ -155,7 +156,7 @@ public class Server
         return validPlayerName;
     }
 
-    private void writeSetupToClient(SetupNetworkObject setupNetworkObject)
+    private void writeSetupToClient(String playerName, SetupNetworkObject setupNetworkObject)
     {
         System.out.println("Writing Player's Card to Client");
 
@@ -167,6 +168,29 @@ public class Server
         catch (IOException e)
         {
             System.out.println(e);
+        }
+
+        System.out.println("I am player: " + playerName);
+
+        for(String otherPlayer : lobby.getSession(playerName).getPlayers(playerName))
+            System.out.println("Other players: " + otherPlayer);
+
+        for(String otherPlayer : lobby.getSession(playerName).getPlayers(playerName))
+            writeToClients(setupNetworkObject, otherPlayer);
+    }
+
+    private void writeToClients(SetupNetworkObject setupNetworkObject, String otherPlayer)
+    {
+        try
+        {
+            clients.get(otherPlayer).getObjectOutputStream().writeObject(setupNetworkObject);
+            clients.get(otherPlayer).getObjectOutputStream().flush();
+        }
+        catch(IOException e)
+        {
+            System.out.println("Problem sending out going network object, Client<writeToClients>");
+            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

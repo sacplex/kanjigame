@@ -6,6 +6,7 @@ import com.tgd.kanjigame.gamerules.Validator;
 import com.tgd.kanjigame.lobby.Session;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.NetworkObject;
+import com.tgd.kanjigame.network.object.PlayOrPassNetworkObject;
 import com.tgd.kanjigame.network.object.PlayerNetworkObject;
 
 import java.io.IOException;
@@ -92,9 +93,9 @@ public class ClientHandler implements Runnable
 
                     if(connected)
                     {
-                        if(networkObject instanceof CardHolderNetworkObject)
+                        if(networkObject instanceof PlayOrPassNetworkObject)
                         {
-                            rebuildCards((CardHolderNetworkObject)networkObject);
+                            playOrPass(((PlayOrPassNetworkObject)networkObject));
                         }
                     }
                 }
@@ -108,22 +109,27 @@ public class ClientHandler implements Runnable
         }
     }
 
-    private void rebuildCards(CardHolderNetworkObject cardHolderNetworkObject)
+    private void playOrPass(PlayOrPassNetworkObject playOrPassNetworkObject)
     {
-        validateCards(cardHolderNetworkObject);
+        rebuildCards(playOrPassNetworkObject);
     }
 
-    private void validateCards(CardHolderNetworkObject cardHolderNetworkObject)
+    private void rebuildCards(PlayOrPassNetworkObject playOrPassNetworkObject)
+    {
+        validateCards(playOrPassNetworkObject);
+    }
+
+    private void validateCards(PlayOrPassNetworkObject playOrPassNetworkObject)
     {
         System.out.println(session);
 
         Validator validator = new Validator();
         validator.add(session);
 
-        ArrayList<Card> cards = new ArrayList<Card>(cardHolderNetworkObject.getCards().size());
+        ArrayList<Card> cards = new ArrayList<Card>(playOrPassNetworkObject.getCardHolderNetworkObject().getCards().size());
 
-        for(int i=0; i < cardHolderNetworkObject.getCards().size(); i++)
-            cards.add(new Card(cardHolderNetworkObject.getCards().get(i)));
+        for(int i=0; i < playOrPassNetworkObject.getCardHolderNetworkObject().getCards().size(); i++)
+            cards.add(new Card(playOrPassNetworkObject.getCardHolderNetworkObject().getCards().get(i)));
 
         for(int i=0; i<cards.size(); i++)
             validator.add(cards.get(i));
@@ -134,17 +140,17 @@ public class ClientHandler implements Runnable
         if(validator.getIntendedRuleSet() != PlayValidator.RULE_SET.ERROR)
         {
             for(String name : session.getPlayers(playerName))
-                writeToClients(cardHolderNetworkObject, name);
+                writeToClients(playOrPassNetworkObject, name);
         }
 
         System.out.println(validator.getIntendedRuleSet());
     }
 
-    private void writeToClients(CardHolderNetworkObject cardHolderNetworkObject, String otherPlayer)
+    private void writeToClients(PlayOrPassNetworkObject playOrPassNetworkObject, String otherPlayer)
     {
         try
         {
-            server.getClientHandler(otherPlayer).getObjectOutputStream().writeObject(cardHolderNetworkObject);
+            server.getClientHandler(otherPlayer).getObjectOutputStream().writeObject(playOrPassNetworkObject);
             server.getClientHandler(otherPlayer).getObjectOutputStream().flush();
         }
         catch(IOException e)

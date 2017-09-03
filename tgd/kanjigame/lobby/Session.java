@@ -3,6 +3,7 @@ package com.tgd.kanjigame.lobby;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.InitialCardNetworkObject;
+import com.tgd.kanjigame.network.object.PlayOrPassNetworkObject;
 import com.tgd.kanjigame.network.object.SetupNetworkObject;
 import com.tgd.kanjigame.players.Content;
 
@@ -139,10 +140,24 @@ public class Session
 
     public SetupNetworkObject getSetupNetworkObject(String player)
     {
-        SetupNetworkObject setupNetworkObject = new SetupNetworkObject(
-                playerContents.get(player).getInitialCardHolderNetworkObject(),
-                playerContents.get(player).getPLayerPosition()
-        );
+        SetupNetworkObject setupNetworkObject;
+
+        if(isFull)
+        {
+            setupNetworkObject = new SetupNetworkObject(
+                    playerContents.get(player).getInitialCardHolderNetworkObject(),
+                    playerContents.get(player).getPLayerPosition(),
+                    SetupNetworkObject.GAME_STATE.PLAY
+            );
+        }
+        else
+        {
+            setupNetworkObject = new SetupNetworkObject(
+                    playerContents.get(player).getInitialCardHolderNetworkObject(),
+                    playerContents.get(player).getPLayerPosition(),
+                    SetupNetworkObject.GAME_STATE.WAIT
+            );
+        }
 
         return setupNetworkObject;
     }

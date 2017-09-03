@@ -96,9 +96,9 @@ public class Client implements Runnable
         receiveFromServer();
     }
 
-    public void sendCardsToServer(CardHolderNetworkObject cardHolderNetworkObject)
+    public void sendPlayOrPassToServer(PlayOrPassNetworkObject playOrPassNetworkObject)
     {
-        sendToServer(cardHolderNetworkObject);
+        sendToServer(playOrPassNetworkObject);
     }
 
     public void sendPlayerToServer(PlayerNetworkObject playerNetworkObject)
@@ -133,9 +133,14 @@ public class Client implements Runnable
             {
                 networkObject = (NetworkObject)objectInputStream.readObject();
 
-                if(networkObject instanceof CardHolderNetworkObject)
+                if(networkObject instanceof PlayOrPassNetworkObject)
                 {
-                    playerBoard.addOtherPlayersCards(rebuildCards((CardHolderNetworkObject) networkObject));
+                    playerBoard.addOtherPlayersCards(rebuildCards((PlayOrPassNetworkObject) networkObject));
+                }
+                else if(networkObject instanceof SetupNetworkObject)
+                {
+                    playerBoard.setPlayState(null);
+                    System.out.println("New Setup Network Object has arrived");
                 }
             }
             catch (ClassNotFoundException e)
@@ -162,7 +167,9 @@ public class Client implements Runnable
             if(networkObject instanceof SetupNetworkObject)
             {
                 System.out.println("Got Player's Cards");
-                playerBoard = new PlayerBoard((SetupNetworkObject)networkObject);
+
+                if(playerBoard == null)
+                    playerBoard = new PlayerBoard((SetupNetworkObject)networkObject);
             }
         }
         catch (ClassNotFoundException e)
@@ -177,12 +184,12 @@ public class Client implements Runnable
         }
     }
 
-    private ArrayList<Card> rebuildCards(CardHolderNetworkObject cardHolderNetworkObject)
+    private ArrayList<Card> rebuildCards(PlayOrPassNetworkObject playOrPassNetworkObject)
     {
-        ArrayList<Card> cards = new ArrayList<Card>(cardHolderNetworkObject.getCards().size());
+        ArrayList<Card> cards = new ArrayList<Card>(playOrPassNetworkObject.getCardHolderNetworkObject().getCards().size());
 
-        for(int i=0; i < cardHolderNetworkObject.getCards().size(); i++)
-            cards.add(new Card(cardHolderNetworkObject.getCards().get(i)));
+        for(int i=0; i < playOrPassNetworkObject.getCardHolderNetworkObject().getCards().size(); i++)
+            cards.add(new Card(playOrPassNetworkObject.getCardHolderNetworkObject().getCards().get(i)));
 
         System.out.println("Other players cards");
 

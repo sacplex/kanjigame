@@ -6,7 +6,7 @@ import com.tgd.kanjigame.control.Button;
 import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
-import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
+import com.tgd.kanjigame.network.object.PlayOrPassNetworkObject;
 import com.tgd.kanjigame.network.object.SetupNetworkObject;
 import com.tgd.kanjigame.players.Player;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,6 +22,7 @@ public class PlayerBoard
     private PlayArea playArea;
     private Button playingButton;
     private String position;
+    private String gameState;
     private ImageIO imageIO;
 
     private Player player;
@@ -61,6 +62,11 @@ public class PlayerBoard
             position = setupNetworkObject.getPosition();
             System.out.println(cards.get(i).getStrokesValue());
         }
+
+        if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.WAIT)
+            gameState = "Please wait for other players...";
+        else if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.PLAY)
+            gameState = null;
     }
 
     public void buildGraphics(ImageIO imageIO)
@@ -83,6 +89,12 @@ public class PlayerBoard
         {
             gc.setTextAlign(TextAlignment.CENTER);
             gc.fillText(position, Game.WIDTH / 2, 75);
+        }
+
+        if(gameState != null)
+        {
+            gc.setTextAlign(TextAlignment.CENTER);
+            gc.fillText(gameState, Game.WIDTH / 2, 200);
         }
 
         if(playingButton != null)
@@ -187,7 +199,12 @@ public class PlayerBoard
                         cardHolderNetworkObject.add(cards.get(i));
                 }
 
-                player.getClient().sendCardsToServer(cardHolderNetworkObject);
+                PlayOrPassNetworkObject playOrPassNetworkObject = new PlayOrPassNetworkObject(
+                        cardHolderNetworkObject,
+                        position
+                );
+
+                player.getClient().sendPlayOrPassToServer(playOrPassNetworkObject);
             }
         }
     }
@@ -251,6 +268,11 @@ public class PlayerBoard
         //card.setCardIndex(tempCardIndex);
 
         Collections.sort(cards);
+    }
+
+    public void setPlayState(String state)
+    {
+        gameState = state;
     }
 
     public void addOtherPlayersCards(ArrayList<Card> cards)
