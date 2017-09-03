@@ -3,18 +3,24 @@ package com.tgd.kanjigame.lobby;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.InitialCardNetworkObject;
+import com.tgd.kanjigame.network.object.SetupNetworkObject;
+import com.tgd.kanjigame.players.Content;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Session
 {
     public static final int NUMBER_OF_STARTING_CARDS = 12;
 
-    private HashMap<String, InitialCardHolderNetworkObject> initialCardHolderNetworkObjects;
+    private HashMap<String, Content> playerContents;
 
     private ArrayList<String> players;
+    private ArrayList<Integer> positions;
+
+    private Random random;
 
     private int capability;
 
@@ -25,16 +31,28 @@ public class Session
 
     public Session(int capability)
     {
-        initialCardHolderNetworkObjects = new HashMap<>();
+        playerContents = new HashMap<>();
 
         isEmpty = true;
         isFull = false;
 
         turn = 1;
 
+        random = new Random();
+
         this.capability = capability;
 
         players = new ArrayList<>();
+
+        initPositions();
+    }
+
+    private void initPositions()
+    {
+        positions = new ArrayList<>(capability);
+
+        for(int i=0; i < capability; i++)
+            positions.add(i);
     }
 
     public void addPlayer(String player)
@@ -106,12 +124,27 @@ public class Session
 
     public void addCards(String player, InitialCardHolderNetworkObject initialCardHolderNetworkObject)
     {
-        initialCardHolderNetworkObjects.put(player, initialCardHolderNetworkObject);
+        playerContents.put(player, new Content(initialCardHolderNetworkObject));
+    }
+
+    public void assignPosition(String player)
+    {
+        playerContents.get(player).setPosition(positions.remove(random.nextInt(positions.size())));
     }
 
     public InitialCardHolderNetworkObject getInitialCardHolderNetworkObject(String player)
     {
-        return initialCardHolderNetworkObjects.get(player);
+        return playerContents.get(player).getInitialCardHolderNetworkObject();
+    }
+
+    public SetupNetworkObject getSetupNetworkObject(String player)
+    {
+        SetupNetworkObject setupNetworkObject = new SetupNetworkObject(
+                playerContents.get(player).getInitialCardHolderNetworkObject(),
+                playerContents.get(player).getPLayerPosition()
+        );
+
+        return setupNetworkObject;
     }
 
     public void newTurn()

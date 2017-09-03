@@ -3,10 +3,7 @@ package com.tgd.kanjigame.network.client;
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.io.ImageIO;
-import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
-import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
-import com.tgd.kanjigame.network.object.NetworkObject;
-import com.tgd.kanjigame.network.object.PlayerNetworkObject;
+import com.tgd.kanjigame.network.object.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +14,9 @@ import java.util.ArrayList;
 
 public class Client implements Runnable
 {
+    public final static String IP_LOCAL_HOST = "localhost";
+    public final static String IP_TGD = "tgd.net.au";
+    public final static String host = IP_LOCAL_HOST;
     private final static int PORT = 1564;
 
     private Thread readerThread;
@@ -52,7 +52,7 @@ public class Client implements Runnable
 
     private void connect(String clientName) throws UnknownHostException, IOException
     {
-        connection = new Socket("tgd.net.au", PORT);
+        connection = new Socket(host, PORT);
 
         if(connection != null)
             connected = true;
@@ -159,10 +159,10 @@ public class Client implements Runnable
         {
             networkObject = (NetworkObject) objectInputStream.readObject();
 
-            if(networkObject instanceof InitialCardHolderNetworkObject)
+            if(networkObject instanceof SetupNetworkObject)
             {
                 System.out.println("Got Player's Cards");
-                playerBoard = new PlayerBoard((InitialCardHolderNetworkObject)networkObject);
+                playerBoard = new PlayerBoard((SetupNetworkObject)networkObject);
             }
         }
         catch (ClassNotFoundException e)

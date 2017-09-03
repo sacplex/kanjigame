@@ -9,12 +9,14 @@ import java.util.Random;
 
 public class Lobby
 {
-    public static final int CAPABILITY = 4;
+    public static final int CAPABILITY = 2;
 
     private ArrayList<Session> sessions;
     private ArrayList<Card> cards;
 
     private Random random;
+
+    private LoadDatabase database;
 
     public Lobby()
     {
@@ -24,6 +26,7 @@ public class Lobby
     public Lobby(LoadDatabase database)
     {
         random = new Random();
+        this.database = database;
 
         sessions = new ArrayList<>();
         cards = new ArrayList<>(Session.NUMBER_OF_STARTING_CARDS * CAPABILITY);
@@ -49,11 +52,12 @@ public class Lobby
 
             for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
             {
-                Card card = cards.remove(random.nextInt(cards.size()-1));
+                Card card = cards.remove(random.nextInt(cards.size()));
                 initialCardHolderNetworkObject.add(card);
             }
 
             session.addCards(player, initialCardHolderNetworkObject);
+            session.assignPosition(player);
 
             System.out.println("Number of Cards: " + cards.size());
 
@@ -68,13 +72,22 @@ public class Lobby
                 Session session = new Session(CAPABILITY);
                 session.addPlayer(player);
 
+                for(int i=0; i < CAPABILITY; i++)
+                {
+                    for(int j=0; j < Session.NUMBER_OF_STARTING_CARDS; j++)
+                    {
+                        cards.add(database.popSkewedUniqueCard());
+                    }
+                }
+
                 for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
                 {
-                    Card card = cards.remove(random.nextInt(cards.size()-1));
+                    Card card = cards.remove(random.nextInt(cards.size()));
                     initialCardHolderNetworkObject.add(card);
                 }
 
                 session.addCards(player, initialCardHolderNetworkObject);
+                session.assignPosition(player);
 
                 sessions.add(session);
             }
@@ -86,12 +99,13 @@ public class Lobby
 
                 for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
                 {
-                    Card card = cards.remove(random.nextInt(cards.size()-1));
+                    Card card = cards.remove(random.nextInt(cards.size()));
 
                     initialCardHolderNetworkObject.add(card);
                 }
 
                 sessions.get(sessions.size() - 1).addCards(player, initialCardHolderNetworkObject);
+                sessions.get(sessions.size() - 1).assignPosition(player);
             }
         }
     }

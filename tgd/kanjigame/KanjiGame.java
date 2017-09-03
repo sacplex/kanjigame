@@ -49,6 +49,7 @@ public class KanjiGame extends Application
         Player player = new Player();
 
         player.setClient(new Client(clientName));
+
         player.getClient().sendPlayerToServer(new PlayerNetworkObject(player.getName()));
         player.getClient().receiveInitiallyFromServer();
         player.getClient().getPlayerBoard().buildGraphics(imageIO);

@@ -7,8 +7,10 @@ import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.CardHolderNetworkObject;
 import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
+import com.tgd.kanjigame.network.object.SetupNetworkObject;
 import com.tgd.kanjigame.players.Player;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +21,7 @@ public class PlayerBoard
     private ArrayList<Card> cards = new ArrayList<>(NUMBER_OF_STARTING_CARDS);
     private PlayArea playArea;
     private Button playingButton;
+    private String position;
     private ImageIO imageIO;
 
     private Player player;
@@ -47,14 +50,15 @@ public class PlayerBoard
             cards.get(i).buildGraphics(imageIO,260 + ((i-NUMBER_OF_STARTING_CARDS/2)*125), 420);
     }
 
-    public PlayerBoard(InitialCardHolderNetworkObject initialCardHolderNetworkObject)
+    public PlayerBoard(SetupNetworkObject setupNetworkObject)
     {
         Card card;
         playArea = new PlayArea(192, 144, Game.WIDTH/2 + Game.WIDTH/6, Game.HEIGHT/3);
 
         for(int i=0; i < NUMBER_OF_STARTING_CARDS; i++)
         {
-            cards.add(new Card(initialCardHolderNetworkObject.get()));
+            cards.add(new Card(setupNetworkObject.getInitialCardHolderNetworkObject().get()));
+            position = setupNetworkObject.getPosition();
             System.out.println(cards.get(i).getStrokesValue());
         }
     }
@@ -74,6 +78,12 @@ public class PlayerBoard
     public void draw(GraphicsContext gc)
     {
         playArea.draw(gc);
+
+        if(position != null)
+        {
+            gc.setTextAlign(TextAlignment.CENTER);
+            gc.fillText(position, Game.WIDTH / 2, 75);
+        }
 
         if(playingButton != null)
             playingButton.draw(gc);

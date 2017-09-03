@@ -5,6 +5,7 @@ import com.tgd.kanjigame.card.Card;
 import com.tgd.kanjigame.card.NCard;
 import com.tgd.kanjigame.card.StrokeCard;
 import com.tgd.kanjigame.math.ComplexMath;
+import com.tgd.kanjigame.network.client.Client;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,7 +31,10 @@ public class LoadDatabase
 
         try
         {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanji", "admin", "q2w3e4r5t6y7u8");
+            if(Client.host.equals(Client.IP_TGD))
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanji", "admin", "q2w3e4r5t6y7u8");
+            else if(Client.host.equals(Client.IP_LOCAL_HOST))
+                connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/kanji", "admin", "admin");
 
             preparedStatement = connection.prepareStatement(ACCESS_ALL_KANJI_DATA);
 

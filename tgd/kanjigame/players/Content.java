@@ -1,0 +1,41 @@
+package com.tgd.kanjigame.players;
+
+import com.tgd.kanjigame.network.object.InitialCardHolderNetworkObject;
+
+public class Content
+{
+    private final static String [] POSITIONS = {"First", "Second", "Third", "Fourth"};
+
+    private InitialCardHolderNetworkObject initialCardHolderNetworkObject;
+    private int position;
+
+    public Content(InitialCardHolderNetworkObject initialCardHolderNetworkObject)
+    {
+        addInitialCards(initialCardHolderNetworkObject);
+    }
+
+    public void addInitialCards(InitialCardHolderNetworkObject initialCardHolderNetworkObject)
+    {
+        this.initialCardHolderNetworkObject = initialCardHolderNetworkObject;
+    }
+
+    public InitialCardHolderNetworkObject getInitialCardHolderNetworkObject()
+    {
+        return initialCardHolderNetworkObject;
+    }
+
+    public void setPosition(int position)
+    {
+        this.position = position;
+    }
+
+    public int getPosition()
+    {
+        return position;
+    }
+
+    public String getPLayerPosition()
+    {
+        return POSITIONS[position] + " Position";
+    }
+}
