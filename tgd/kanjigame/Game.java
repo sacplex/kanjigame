@@ -32,17 +32,21 @@ public class Game
 
     public void initMouse()
     {
-        if(scene != null && PlayerBoard.playing)
+        if(scene != null)
         {
             scene.setOnMousePressed(event -> {
-                playerBoard.hasMouseIntersectedWithButton((int)event.getX(), (int)event.getY());
 
-                if(playingCard != null) {
-                    if(!playerBoard.getPlayArea().hasCardIntersectedWithPlayArea(playingCard))
-                        playingCard.resetOriginal();
+                if(PlayerBoard.playing)
+                {
+                    playerBoard.hasMouseIntersectedWithButton((int) event.getX(), (int) event.getY());
+
+                    if (playingCard != null) {
+                        if (!playerBoard.getPlayArea().hasCardIntersectedWithPlayArea(playingCard))
+                            playingCard.resetOriginal();
+                    }
+
+                    playingCard = playerBoard.hasMouseIntersectedWithCard((int) event.getX(), (int) event.getY());
                 }
-
-                playingCard = playerBoard.hasMouseIntersectedWithCard((int)event.getX(), (int)event.getY());
             });
 
             scene.setOnMouseMoved(mouseMoveEvent -> {

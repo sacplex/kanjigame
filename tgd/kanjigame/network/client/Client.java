@@ -137,13 +137,11 @@ public class Client implements Runnable
 
                 if(networkObject instanceof PlayOrPassNetworkObject)
                 {
-                    System.out.println(((PlayOrPassNetworkObject) networkObject).getPosition());
-                    System.out.println(playerBoard.getPosition());
+                    System.out.println("From Server: " + ((PlayOrPassNetworkObject) networkObject).getPosition());
+                    System.out.println("From Local: " + playerBoard.getPosition());
 
                     if(((PlayOrPassNetworkObject) networkObject).getPosition().equals(playerBoard.getPosition()))
                         PlayerBoard.playing = true;
-                    else
-                        PlayerBoard.playing = false;
 
                     playerBoard.setPlayState(null);
 
@@ -156,6 +154,7 @@ public class Client implements Runnable
                     System.out.println(((SetupNetworkObject)networkObject).getPosition());
 
                     playerBoard.setGameState((SetupNetworkObject)networkObject);
+                    playerBoard.setFirstPlayerToPlaying();
                 }
             }
             catch (ClassNotFoundException e)
@@ -189,6 +188,7 @@ public class Client implements Runnable
                 System.out.println(((SetupNetworkObject)networkObject).getPosition());
 
                 playerBoard.setGameState((SetupNetworkObject)networkObject);
+                playerBoard.setFirstPlayerToPlaying();
             }
         }
         catch (ClassNotFoundException e)

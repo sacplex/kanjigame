@@ -65,12 +65,13 @@ public class PlayerBoard
         }
 
         position = setupNetworkObject.getPosition();
+    }
 
+    public void setFirstPlayerToPlaying()
+    {
         if(position.equals("First"))
             playing = true;
     }
-
-
 
     public void buildGraphics(ImageIO imageIO)
     {
@@ -212,6 +213,7 @@ public class PlayerBoard
                 );
 
                 player.getClient().sendPlayOrPassToServer(playOrPassNetworkObject);
+                PlayerBoard.playing = false;
             }
         }
         else if(passButton.intersected(x,y))
@@ -361,11 +363,9 @@ public class PlayerBoard
         {
             if(!setupNetworkObject.getPosition().equals(position)) {
                 gameState = "Waiting for other players to play";
-                playing = false;
             }
             else {
                 gameState = null;
-                playing = true;
             }
         }
     }
