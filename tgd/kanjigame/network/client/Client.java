@@ -147,6 +147,8 @@ public class Client implements Runnable
 
                     if(((PlayOrPassNetworkObject) networkObject).getPlayState() == PlayOrPassNetworkObject.PLAY_STATE.PLAY)
                         playerBoard.addOtherPlayersCards(rebuildCards((PlayOrPassNetworkObject) networkObject));
+                    else if(((PlayOrPassNetworkObject) networkObject).getPlayState() == PlayOrPassNetworkObject.PLAY_STATE.PASS)
+                        playerBoard.addOtherPlayersCards(null);
                 }
                 else if(networkObject instanceof SetupNetworkObject)
                 {

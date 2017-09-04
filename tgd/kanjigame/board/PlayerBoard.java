@@ -224,6 +224,7 @@ public class PlayerBoard
             );
 
             player.getClient().sendPlayOrPassToServer(playOrPassNetworkObject);
+            PlayerBoard.playing = false;
         }
     }
 
@@ -231,7 +232,7 @@ public class PlayerBoard
     {
         Card card = null;
 
-        for(int i = 0; i < NUMBER_OF_STARTING_CARDS; i++)
+        for(int i = 0; i < cards.size(); i++)
         {
             if(cards.get(i).getMoveUpY() == 20) {
                 System.out.println("I am up");
@@ -301,7 +302,7 @@ public class PlayerBoard
     public void addOtherPlayersCards(ArrayList<Card> cards)
     {
         System.out.println("add Other Players Cards");
-        System.out.println(cards.size());
+
 
         boolean moveIncomingCardsUp = true;
 
@@ -326,16 +327,21 @@ public class PlayerBoard
 
         PlayArea.resetCardIndices();
 
-        for(int i=0; i<cards.size(); i++)
+        if(cards != null)
         {
-            cards.get(i).buildGraphics(this.imageIO, 0,0);
-            cards.get(i).toFrontOfCardLarge();
-            cards.get(i).setCardState(Card.CARD_STATE.Post_Play);
+            System.out.println(cards.size());
 
-            //if(moveIncomingCardsUp)
+            for (int i = 0; i < cards.size(); i++)
+            {
+                cards.get(i).buildGraphics(this.imageIO, 0, 0);
+                cards.get(i).toFrontOfCardLarge();
+                cards.get(i).setCardState(Card.CARD_STATE.Post_Play);
+
+                //if(moveIncomingCardsUp)
                 cards.get(i).nextPlayerPlayed();
 
-            this.cards.add(cards.get(i));
+                this.cards.add(cards.get(i));
+            }
         }
 
         /*for(int i=0; i<this.cards.size(); i++)
