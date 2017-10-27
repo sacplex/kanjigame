@@ -155,8 +155,8 @@ public class Client implements Runnable
                     System.out.println("New Setup Network Object has arrived");
                     System.out.println(((SetupNetworkObject)networkObject).getPosition());
 
-                    playerBoard.setGameState((SetupNetworkObject)networkObject);
                     playerBoard.setFirstPlayerToPlaying();
+                    playerBoard.setGameState((SetupNetworkObject)networkObject);
                 }
             }
             catch (ClassNotFoundException e)

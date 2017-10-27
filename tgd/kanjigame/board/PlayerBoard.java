@@ -207,13 +207,22 @@ public class PlayerBoard
                         cardHolderNetworkObject.add(cards.get(i));
                 }
 
-                PlayOrPassNetworkObject playOrPassNetworkObject = new PlayOrPassNetworkObject(
-                        cardHolderNetworkObject,
-                        position
-                );
+                if(cardHolderNetworkObject.size() > 0) {
 
-                player.getClient().sendPlayOrPassToServer(playOrPassNetworkObject);
-                PlayerBoard.playing = false;
+                    PlayOrPassNetworkObject playOrPassNetworkObject = new PlayOrPassNetworkObject(
+                            cardHolderNetworkObject,
+                            position
+                    );
+
+                    player.getClient().sendPlayOrPassToServer(playOrPassNetworkObject);
+                    PlayerBoard.playing = false;
+                    gameState = null;
+                }
+                else if(cardHolderNetworkObject.size() == 0)
+                {
+                    System.out.println("Error, player needs to play a card");
+                    gameState = "Please, play a card first!";
+                }
             }
         }
         else if(passButton.intersected(x,y))
@@ -363,15 +372,21 @@ public class PlayerBoard
 
     public void setGameState(SetupNetworkObject setupNetworkObject)
     {
+        if(position == null)
+            position = setupNetworkObject.getPosition();
+
+        System.out.println(setupNetworkObject.getPosition());
+
         if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.WAIT)
             gameState = "Please wait for other players...";
         else if(setupNetworkObject.getPlayState() == SetupNetworkObject.GAME_STATE.PLAY)
         {
-            if(!setupNetworkObject.getPosition().equals(position)) {
-                gameState = "Waiting for other players to play";
+            if(position.equals("First"))
+            {
+                gameState = "Please play your cards or pass!";
             }
             else {
-                gameState = null;
+                gameState = "Waiting for other players to play";
             }
         }
     }

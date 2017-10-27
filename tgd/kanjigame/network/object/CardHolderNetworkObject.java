@@ -27,6 +27,11 @@ public class CardHolderNetworkObject extends NetworkObject
         cards.add(cardNetworkObject);
     }
 
+    public int size()
+    {
+        return cards != null ? cards.size() : 0;
+    }
+
     public ArrayList<CardNetworkObject> getCards()
     {
         return cards;
