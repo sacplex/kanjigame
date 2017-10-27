@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -164,6 +165,11 @@ public class Client implements Runnable
                 System.out.println("<Client - ClassNotFoundException, can not convert network object>");
                 e.printStackTrace();
             }
+            catch(SocketException e)
+            {
+                System.out.println("<Client - SocketException, lost connected with server>");
+                running = false;
+            }
             catch(IOException e)
             {
                 System.out.println("<Client - IOException, can not read network object>");
@@ -202,6 +208,17 @@ public class Client implements Runnable
         {
             System.out.println("<Client - IOException, can not read network object>");
             e.printStackTrace();
+        }
+    }
+
+    public void terminate()
+    {
+        NetworkObject networkObject = new NetworkObject();
+        networkObject.terminateConnection();
+
+        if(objectOutputStream != null)
+        {
+            sendToServer(networkObject);
         }
     }
 

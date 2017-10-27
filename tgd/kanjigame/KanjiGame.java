@@ -1,7 +1,5 @@
 package com.tgd.kanjigame;
 
-import com.tgd.kanjigame.board.PlayerBoard;
-import com.tgd.kanjigame.database.LoadDatabase;
 import com.tgd.kanjigame.io.ImageIO;
 
 import com.tgd.kanjigame.network.client.Client;
@@ -18,6 +16,8 @@ import java.util.Scanner;
 
 public class KanjiGame extends Application
 {
+    Player player;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -47,7 +47,7 @@ public class KanjiGame extends Application
         Scanner scanner = new Scanner(System.in);
         String clientName = scanner.next();
 
-        Player player = new Player();
+        player = new Player();
 
         player.setClient(new Client(clientName));
 
@@ -55,11 +55,6 @@ public class KanjiGame extends Application
         player.getClient().receiveInitiallyFromServer();
         player.getClient().getPlayerBoard().buildGraphics(imageIO);
         player.getClient().startReaderThread();
-        //player.getClient().getPlayerBoard().setImageIO(imageIO);
-
-
-
-
         player.getClient().getPlayerBoard().setPlayer(player);
 
         Game game = new Game(gc);
@@ -71,7 +66,13 @@ public class KanjiGame extends Application
         game.run();
 
         primaryStage.show();
+    }
 
+    @Override
+    public void stop(){
+        player.getClient().terminate();
+        System.out.println("Stage is closing");
+        System.exit(0);
     }
 
     public static void main(String[] args) {
