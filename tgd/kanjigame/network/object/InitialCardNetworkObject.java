@@ -1,7 +1,5 @@
 package com.tgd.kanjigame.network.object;
 
-import com.tgd.kanjigame.card.Card;
-
 public class InitialCardNetworkObject extends NetworkObject
 {
     private String kanji_character;
@@ -12,15 +10,15 @@ public class InitialCardNetworkObject extends NetworkObject
     private int stroke;
     private String english;
 
-    public InitialCardNetworkObject(Card card)
+    public InitialCardNetworkObject(int strokes, String colour, String kanji, String kunyomi, String onyomi, String english, int index)
     {
-        this.kanji_character = card.getKanji();
-        this.onyomi = card.getOnyomi();
-        this.kunyomi = card.getKunyomi();
+        this.kanji_character = kanji;
+        this.onyomi = onyomi;
+        this.kunyomi = kunyomi;
         //this.kana = card.;
-        this.colour = card.getColour();
-        this.stroke = card.getStrokesValue();
-        this.english = card.getEnglish();
+        this.colour = colour;
+        this.stroke = strokes;
+        this.english = english;
     }
 
     public String getKanji_character()

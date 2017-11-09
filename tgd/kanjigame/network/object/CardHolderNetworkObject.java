@@ -13,16 +13,17 @@ public class CardHolderNetworkObject extends NetworkObject
         cards = new ArrayList<>();
     }
 
-    public void add(Card card)
+    //public void add(Card card)
+    public void add(int strokes, String colour, String kanji, String kunyomi, String onyomi, String english, int index)
     {
         CardNetworkObject cardNetworkObject = new CardNetworkObject();
-        cardNetworkObject.setStrokeNumber(card.getStrokesValue());
-        cardNetworkObject.setColour(card.getColour());
-        cardNetworkObject.setKanji(card.getKanji());
-        cardNetworkObject.setKunyomi(card.getKunyomi());
-        cardNetworkObject.setOnyomi(card.getOnyomi());
-        cardNetworkObject.setEnglsih(card.getEnglish());
-        cardNetworkObject.setCardIndex(card.getCardIndex());
+        cardNetworkObject.setStrokeNumber(strokes);
+        cardNetworkObject.setColour(colour);
+        cardNetworkObject.setKanji(kanji);
+        cardNetworkObject.setKunyomi(kunyomi);
+        cardNetworkObject.setOnyomi(onyomi);
+        cardNetworkObject.setEnglsih(english);
+        cardNetworkObject.setCardIndex(index);
 
         cards.add(cardNetworkObject);
     }

@@ -204,7 +204,13 @@ public class PlayerBoard
                 for(int i=0; i<cards.size(); i++)
                 {
                     if(cards.get(i).getCardState() == Card.CARD_STATE.Played)
-                        cardHolderNetworkObject.add(cards.get(i));
+                        cardHolderNetworkObject.add(cards.get(i).getStrokesValue(),
+                                cards.get(i).getColour(),
+                                cards.get(i).getKanji(),
+                                cards.get(i).getKunyomi(),
+                                cards.get(i).getOnyomi(),
+                                cards.get(i).getEnglish(),
+                                cards.get(i).getCardIndex());
                 }
 
                 if(cardHolderNetworkObject.size() > 0) {

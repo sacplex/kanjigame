@@ -1,6 +1,8 @@
 package com.tgd.kanjigame.network.object;
 
-import com.tgd.kanjigame.card.Card;
+/**
+ * Created by sacplex on 7/11/2017.
+ */
 
 import java.util.ArrayList;
 
@@ -13,9 +15,10 @@ public class InitialCardHolderNetworkObject extends NetworkObject
         initialCards = new ArrayList<>();
     }
 
-    public void add(Card card)
+    public void add(int strokes, String colour, String kanji, String kunyomi, String onyomi, String english, int index)
     {
-        InitialCardNetworkObject initialCardNetworkObject = new InitialCardNetworkObject(card);
+        InitialCardNetworkObject initialCardNetworkObject = new InitialCardNetworkObject(strokes,
+                colour, kanji, kunyomi, onyomi, english, index);
 
         initialCards.add(initialCardNetworkObject);
     }
@@ -25,3 +28,4 @@ public class InitialCardHolderNetworkObject extends NetworkObject
         return initialCards.remove(0);
     }
 }
+

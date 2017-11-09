@@ -19,7 +19,7 @@ public class Client implements Runnable
 {
     public final static String IP_LOCAL_HOST = "localhost";
     public final static String IP_TGD = "tgd.net.au";
-    public final static String host = IP_LOCAL_HOST;
+    public final static String host = IP_TGD;
     private final static int PORT = 1564;
 
     private Thread readerThread;

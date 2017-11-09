@@ -53,7 +53,13 @@ public class Lobby
             for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
             {
                 Card card = cards.remove(random.nextInt(cards.size()));
-                initialCardHolderNetworkObject.add(card);
+                initialCardHolderNetworkObject.add(card.getStrokesValue(),
+                        card.getColour(),
+                        card.getKanji(),
+                        card.getKunyomi(),
+                        card.getOnyomi(),
+                        card.getEnglish(),
+                        card.getCardIndex());
             }
 
             session.addCards(player, initialCardHolderNetworkObject);
@@ -83,7 +89,13 @@ public class Lobby
                 for(int i=0; i<Session.NUMBER_OF_STARTING_CARDS; i++)
                 {
                     Card card = cards.remove(random.nextInt(cards.size()));
-                    initialCardHolderNetworkObject.add(card);
+                    initialCardHolderNetworkObject.add(card.getStrokesValue(),
+                            card.getColour(),
+                            card.getKanji(),
+                            card.getKunyomi(),
+                            card.getOnyomi(),
+                            card.getEnglish(),
+                            card.getCardIndex());
                 }
 
                 session.addCards(player, initialCardHolderNetworkObject);
@@ -101,7 +113,13 @@ public class Lobby
                 {
                     Card card = cards.remove(random.nextInt(cards.size()));
 
-                    initialCardHolderNetworkObject.add(card);
+                    initialCardHolderNetworkObject.add(card.getStrokesValue(),
+                            card.getColour(),
+                            card.getKanji(),
+                            card.getKunyomi(),
+                            card.getOnyomi(),
+                            card.getEnglish(),
+                            card.getCardIndex());
                 }
 
                 sessions.get(sessions.size() - 1).addCards(player, initialCardHolderNetworkObject);
