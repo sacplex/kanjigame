@@ -211,6 +211,11 @@ public class Client implements Runnable
         }
     }
 
+    public void sendToServer()
+    {
+        // Todo implement later
+    }
+
     public void terminate()
     {
         NetworkObject networkObject = new NetworkObject();
