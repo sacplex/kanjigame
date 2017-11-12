@@ -55,6 +55,7 @@ public class KanjiGame extends Application
         player.getClient().receiveInitiallyFromServer();
         player.getClient().getPlayerBoard().buildGraphics(imageIO);
         player.getClient().startReaderThread();
+        player.getClient().startWriterThread();
         player.getClient().getPlayerBoard().setPlayer(player);
 
         Game game = new Game(gc);

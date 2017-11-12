@@ -1,11 +1,8 @@
 package com.tgd.kanjigame.network.client;
 
-import com.tgd.kanjigame.board.PlayArea;
 import com.tgd.kanjigame.board.PlayerBoard;
 import com.tgd.kanjigame.card.Card;
-import com.tgd.kanjigame.io.ImageIO;
 import com.tgd.kanjigame.network.object.*;
-import com.tgd.kanjigame.players.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,26 +11,32 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
 
-public class Client implements Runnable
+public class Client
 {
     public final static String IP_LOCAL_HOST = "localhost";
     public final static String IP_TGD = "tgd.net.au";
     public final static String host = IP_TGD;
     private final static int PORT = 1564;
 
+    private ArrayBlockingQueue<Integer> writeDataBlockQueue;
+
     private Thread readerThread;
+    private Thread writerThread;
 
     private Socket connection;
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
+    private NetworkObject networkObject;
 
     private PlayerBoard playerBoard;
 
     private String clientName;
 
     private volatile boolean connected;
-    private volatile boolean running;
+    private volatile boolean readRunning;
+    private volatile boolean writeRunning;
 
     public Client(String clientName)
     {
@@ -77,8 +80,6 @@ public class Client implements Runnable
             {
                 System.out.println("IOException: " + e);
             }
-
-
         }
         else
         {
@@ -88,15 +89,30 @@ public class Client implements Runnable
 
     public void startReaderThread()
     {
-        readerThread = new Thread(this);
-        running = true;
+        readerThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                receiveFromServer();
+            }
+        });
+        readRunning = true;
 
         readerThread.start();
     }
 
-    public void run()
+    public void startWriterThread()
     {
-        receiveFromServer();
+        writerThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                sendingToServer();
+            }
+        });
+        writeRunning = true;
+
+        writeDataBlockQueue = new ArrayBlockingQueue<>(1);
+
+        writerThread.start();
     }
 
     public void sendPlayOrPassToServer(PlayOrPassNetworkObject playOrPassNetworkObject)
@@ -106,21 +122,51 @@ public class Client implements Runnable
 
     public void sendPlayerToServer(PlayerNetworkObject playerNetworkObject)
     {
-        sendToServer(playerNetworkObject);
+        writeNetworkObject(playerNetworkObject);
     }
 
     private void sendToServer(NetworkObject networkObject)
     {
         try
         {
+            this.networkObject = networkObject;
+            writeDataBlockQueue.put(1);
+        }
+        catch (InterruptedException e)
+        {
+
+        }
+    }
+
+    private void sendingToServer()
+    {
+        while(writeRunning)
+        {
+            try
+            {
+                writeDataBlockQueue.take();
+
+                writeNetworkObject(networkObject);
+            }
+            catch (InterruptedException e)
+            {
+
+            }
+        }
+    }
+
+    private void writeNetworkObject(NetworkObject networkObject)
+    {
+        try
+        {
             objectOutputStream.writeObject(networkObject);
             objectOutputStream.flush();
         }
-        catch(UnknownHostException e)
+        catch (UnknownHostException e)
         {
             System.out.println(e);
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             System.out.println(e);
         }
@@ -130,7 +176,7 @@ public class Client implements Runnable
     {
         NetworkObject networkObject;
 
-        while(running)
+        while(readRunning)
         {
             try
             {
@@ -168,7 +214,7 @@ public class Client implements Runnable
             catch(SocketException e)
             {
                 System.out.println("<Client - SocketException, lost connected with server>");
-                running = false;
+                readRunning = false;
             }
             catch(IOException e)
             {
